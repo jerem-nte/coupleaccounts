@@ -1,0 +1,28 @@
+<div class="center">
+		
+		<div ng-show="message" class="alert" ng-class="{' alert-success' : message.status == 0, ' alert-danger' : message.status == 1}" role="alert">
+			{{message.msg}}
+		</div>
+		
+		<div class="page-header">
+		  <h4>Transations archivées</h4>
+		</div>
+		
+		<table class="table table-bordered">
+			<thead>
+				<tr><th>Payeur</th><th>Description</th><th>Montant</th><th>Pour qui</th></tr>
+			</thead>
+			
+			<tr ng-repeat="transaction in transactions">
+				<td class="name"><img ng-src="img\{{transaction.user.gender}}.png"> &nbsp; {{transaction.user.name}}</td>
+				<td class="trslabel">{{transaction.label}}</td>
+				<td class="amount">{{transaction.amount}} CHF</td>
+				<td> <img ng-src="img\{{transaction.scope}}.png" /></td>
+				<td><button class="btn btn-danger btn-xs" ng-click="deleteTransaction(transaction.id)">Delete</button></td>
+			</tr>
+			
+			<tr  ng-show="transactions.length == 0"><td colspan="4">Aucune archive</td></tr>
+			
+		</table>
+		
+	</div>

@@ -1,0 +1,105 @@
+body {
+	font-family: Helvetica, Arial, sans-serif; /* Nicer font */
+}
+
+.banner {
+	width: 100%;
+}
+#selectuser {
+	
+	width: 30%;
+}
+
+#selectuser {
+	
+	width: 20%;
+}
+
+#inputamount {
+	
+	width: 20%;
+}
+
+#inputlabel {
+	
+	width: 30%;
+}
+
+.pink {
+	
+	color: #DF01D7;
+	
+}
+
+.blue {
+	
+	color: #013ADF;
+	
+}
+
+td, th { border: 1px solid #CCC; padding: 0 0 0 0; } /* Make cells a bit taller */
+
+th {
+background: #F3F3F3; /* Light grey background */
+font-weight: bold; /* Make sure they're bold */
+}
+
+td {
+background: #FAFAFA; /* Lighter grey background */
+text-align: center; /* Center our text */
+}
+
+td.amount {
+	width: 50px;
+	text-align: right; /* Center our text */
+}
+
+td.name {
+	width: 150px;
+	text-align: left; /* Center our text */
+}
+
+td.trslabel {
+	width: 300px;
+	text-align: right; /* Center our text */
+}
+
+.center {
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+	width: 40%;
+}
+
+ ul {
+    list-style-type: none;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    overflow: hidden;
+    background-color: #f2f2f2;
+	border-bottom: 1px solid #ccc; 
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+}
+
+li {
+    float: left;
+}
+
+
+a:link, a:visited {
+    display: block;
+    font-weight: bold;
+    color: #069;
+    text-align: center;
+    padding: 6px;
+    text-decoration: none;
+    border-right: 1px solid #ccc;
+}
+
+a:hover, a:active {
+   color: #c00;
+   background-color: #fff; 
+   text-decoration: none;
+}
