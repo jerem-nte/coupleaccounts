@@ -17,7 +17,7 @@ public class UserDao {
 	
 	public static List<User> getUsers() {
 		
-		List userList = new ArrayList<User>();
+		List<User> userList = new ArrayList<User>();
 
 		String sql = "SELECT * FROM users";
 		
@@ -44,5 +44,47 @@ public class UserDao {
 		
 		return userList;
 	}
+	
+	
+	private static User getUser(String userId) {
+		
+		User u = null;
+		
+		String sql = "SELECT * FROM users WHERE id=" + userId;
+		
+		Connection c = MysqlConnection.getConnection();
+		ResultSet r;
+		
+		try {
+			r = c.createStatement().executeQuery(sql);
+
+			if(r.next()) {
+				u = new User(r.getString("id"), r.getString("name"), r.getString("gender"));
+			}
+		} catch (SQLException e) {
+			logger.error("Cannot retreive user from database", e);
+			return null;
+		} finally {
+			try {
+				c.close();
+			} catch (SQLException e) {
+				logger.error("Cannot close connection", e);
+			}
+		}
+		
+		return u;
+	}
+	
+	public static User getFirstUser() {
+		
+		return getUser("1");
+	}
+	
+	public static User getSecondUser() {
+		
+		return getUser("2");
+	}
+	
+	
 
 }

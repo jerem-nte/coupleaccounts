@@ -1,13 +1,15 @@
 package core;
 
+import java.math.BigDecimal;
+
 public class Debt {
 	
 	private User debit;
 	private User credit;
-	private Double debt;
+	private BigDecimal debt;
 	
 	
-	public Debt(User debit, User credit, Double debt) {
+	public Debt(User debit, User credit, BigDecimal debt) {
 		super();
 		this.debit = debit;
 		this.credit = credit;
@@ -27,10 +29,10 @@ public class Debt {
 	public void setCredit(User credit) {
 		this.credit = credit;
 	}
-	public Double getDebt() {
+	public BigDecimal getDebt() {
 		return debt;
 	}
-	public void setDebt(Double debt) {
+	public void setDebt(BigDecimal debt) {
 		this.debt = debt;
 	}
 	

@@ -1,64 +1,37 @@
 package core;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import dao.ExpenseDao;
 import dao.UserDao;
 
 public class DebtEngine {
 	
-	private List<Claim> claims;
+	private static Logger logger = Logger.getLogger(DebtEngine.class);
 	
-	
-	public DebtEngine() {
-		claims = new ArrayList<Claim>();
-		initUserClaims();
-	}
-
-
 	public Debt compute() {
 		
-		for (Map.Entry<User, Double> entry : ExpenseDao.getSharedExpensesSum().entrySet())
-		{
-			Claim userClaim = getUserClaim(entry.getKey());
-			userClaim.incrementClaim(Math.floor(entry.getValue() / 2));
-		}
+		User first = UserDao.getFirstUser();
+		User second = UserDao.getSecondUser();
 		
-		for (Map.Entry<User, Double> entry : ExpenseDao.getNotSharedExpensesSum().entrySet())
-		{
-			Claim userClaim = getUserClaim(entry.getKey());
-			userClaim.incrementClaim(entry.getValue());
-		}
+		BigDecimal firstUserExpenses = ExpenseDao.geUserExpenses(first);
+		BigDecimal secondUserExpenses = ExpenseDao.geUserExpenses(second);
 		
+		logger.info("Expenses of " + first.getName() + " = " + firstUserExpenses);
+		logger.info("Expenses of " + second.getName() + " = " + secondUserExpenses);
 		
-		if(claims.get(0).getClaim() > claims.get(1).getClaim()) {
-			return new Debt(claims.get(1).getUser(), claims.get(0).getUser(), Math.floor(claims.get(0).getClaim()-claims.get(1).getClaim()));
+		if(firstUserExpenses.compareTo(secondUserExpenses) == 1) {
+			logger.info(second.getName() + " must pay " + firstUserExpenses.subtract(secondUserExpenses));
+			return new Debt(second, first, firstUserExpenses.subtract(secondUserExpenses));
 		} else {
-			return new Debt(claims.get(0).getUser(), claims.get(1).getUser(), Math.floor(claims.get(1).getClaim()-claims.get(0).getClaim()));
-		}
-		
+			logger.info(first.getName() + " must pay " + secondUserExpenses.subtract(firstUserExpenses));
+			return new Debt(first, second, secondUserExpenses.subtract(firstUserExpenses));
+		} 
 	}
-	
-	
-	private void initUserClaims() {
-		
-		List<User> users = UserDao.getUsers();
-		
-		for (User user : users) {
-			claims.add(new Claim(user, 0.0));
-		}
-	}
-	
-	private Claim getUserClaim(User user) {
-		for (Claim claim : claims) {
-			if(claim.getUser().equals(user))
-				return claim;
-		}
-		return null;
-	}
-	
-	
 
 }

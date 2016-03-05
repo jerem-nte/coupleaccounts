@@ -1,5 +1,6 @@
 package dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -113,24 +114,26 @@ public class ExpenseDao {
 			}
 		}
 	}
+
 	
-	public static Map<User, Double> getSharedExpensesSum() {
+	public static BigDecimal geUserExpenses(User u) {
 		
-		Map<User, Double> sharedExpenses = new HashMap<User, Double>();
+		BigDecimal amount = new BigDecimal(0);
 		
-		String sql = "SELECT usrs.id as id, name, gender, sum(amount) AS sum_amount FROM transactions trs JOIN users usrs ON usrs.id = trs.user_id WHERE scope='0' AND archived=false GROUP BY id";
+		String sql = "SELECT COALESCE(sum(amount), 0) AS sum_amount FROM transactions trs WHERE scope='1' AND archived=false AND user_id=" + u.getId();
+		String sql_shared = "SELECT COALESCE(sum(amount)/2, 0) AS sum_amount FROM transactions trs WHERE scope='0' AND archived=false AND user_id=" + u.getId();
 		
 		Connection c = MysqlConnection.getConnection();
 		ResultSet r;
 		
 		try {
 			r = c.createStatement().executeQuery(sql);
-		
-			while (r.next()) {
-				User u = new User(r.getString("id"), r.getString("name"), r.getString("gender"));
-				Double amount = r.getDouble("sum_amount");
-				sharedExpenses.put(u, amount);
-			}
+			if(r.next())
+				amount = amount.add(r.getBigDecimal("sum_amount"));
+			
+			r = c.createStatement().executeQuery(sql_shared);
+			if(r.next())
+				amount = amount.add(r.getBigDecimal("sum_amount"));
 			
 		} catch (SQLException e) {
 			logger.error("Cannot retreive users from database", e);
@@ -143,39 +146,7 @@ public class ExpenseDao {
 			}
 		}
 		
-		return sharedExpenses;
-	}
-	
-	public static Map<User, Double> getNotSharedExpensesSum() {
-		
-		Map<User, Double> notSharedExpenses = new HashMap<User, Double>();
-		
-		String sql = "SELECT usrs.id as id, name, gender, sum(amount) AS sum_amount FROM transactions trs JOIN users usrs ON usrs.id = trs.user_id WHERE scope='1' and archived=false GROUP BY id";
-		
-		Connection c = MysqlConnection.getConnection();
-		ResultSet r;
-		
-		try {
-			r = c.createStatement().executeQuery(sql);
-		
-			while (r.next()) {
-				User u = new User(r.getString("id"), r.getString("name"), r.getString("gender"));
-				Double amount = r.getDouble("sum_amount");
-				notSharedExpenses.put(u, amount);
-			}
-			
-		} catch (SQLException e) {
-			logger.error("Cannot retreive users from database", e);
-			return null;
-		} finally {
-			try {
-				c.close();
-			} catch (SQLException e) {
-				logger.error("Cannot close connection", e);
-			}
-		}
-		
-		return notSharedExpenses;
+		return amount.setScale(2, BigDecimal.ROUND_UP);
 	}
 	
 }
