@@ -1,7 +1,5 @@
 package config;
 
-import java.io.File;
-
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -19,9 +17,9 @@ public class DatabaseConfiguration {
 		logger.info("Init database config");
 		
 		try {
-			config = new PropertiesConfiguration(new File("src/main/resources/database.properties"));
+			config = new PropertiesConfiguration(this.getClass().getResource("/config/database.properties"));
 		} catch (ConfigurationException e) {
-			logger.error("Cannot read property configuration file", e);
+			logger.error("Cannot read property configuration file", e); //TODO: throw error up
 		}
 	}
 	

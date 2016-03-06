@@ -32,6 +32,8 @@ public class MysqlConnection {
 		
 		String url = "jdbc:mysql://" + host + ":" + port + "/" + base;
 		
+		logger.info("Database url = "+ url);
+		
 		Connection dbConnection = null;
 
 		try {

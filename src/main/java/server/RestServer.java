@@ -1,5 +1,7 @@
 package server;
 
+import java.net.URL;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.jetty.server.Handler;
@@ -18,23 +20,26 @@ public class RestServer {
     public static void main(String[] args) throws Exception {
 
     	try {
-    		PropertyConfigurator.configure(RestServer.class.getResourceAsStream("/log4j.properties"));
+    		PropertyConfigurator.configure(RestServer.class.getResourceAsStream("/config/log4j.properties"));
     	} catch(Exception e) {
     		logger.error("Cannot load log4j configuration file", e);
     	}
     	
     	logger.info("Starting couple account server");
     	
+    	 String  baseStr  = "/html";
+    	 URL     baseUrl  = RestServer.class.getResource( baseStr ); 
+    	 String  basePath = baseUrl.toExternalForm();
+    	 logger.info("Base path for static resources is " + basePath);
+    	
     	ResourceHandler staticContext = new ResourceHandler();
         staticContext.setDirectoriesListed(true);
         staticContext.setWelcomeFiles(new String[] { "index.html" });
-        staticContext.setResourceBase("./html");
+        staticContext.setResourceBase(basePath);
        
     	
         // Create JAX-RS application.
-        final ResourceConfig application = new ResourceConfig()
-                .packages("services")
-                .register(JacksonFeature.class);
+        final ResourceConfig application = new ResourceConfig().packages("services").register(JacksonFeature.class);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
