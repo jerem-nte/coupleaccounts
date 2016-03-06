@@ -1,4 +1,4 @@
-package resources;
+package services;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import dao.CurrencyDao;
 import dto.CurrencyHtmlSelectDto;
 
 @Path("/currency")
-public class CurrencyResource {
+public class CurrencyService {
 
 	
 	@GET

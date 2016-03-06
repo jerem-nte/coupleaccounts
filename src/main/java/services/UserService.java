@@ -1,4 +1,4 @@
-package resources;
+package services;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import dao.UserDao;
 import dto.UserHtmlSelectDto;
 
 @Path("/user")
-public class UserResource {
+public class UserService {
 
 	
 	@GET

@@ -1,4 +1,4 @@
-package resources;
+package services;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import dao.ExpenseDao;
 import dto.ResponseDto;
 
 @Path("/expense")
-public class ExpenseResource {
+public class ExpenseService {
 	
 	
 	@GET

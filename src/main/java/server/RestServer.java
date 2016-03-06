@@ -33,7 +33,7 @@ public class RestServer {
     	
         // Create JAX-RS application.
         final ResourceConfig application = new ResourceConfig()
-                .packages("resources")
+                .packages("services")
                 .register(JacksonFeature.class);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
