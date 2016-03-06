@@ -17,9 +17,13 @@ public class RestServer {
 
     public static void main(String[] args) throws Exception {
 
-    	PropertyConfigurator.configure("src/main/resources/log4j.properties");
+    	try {
+    		PropertyConfigurator.configure(RestServer.class.getResourceAsStream("/log4j.properties"));
+    	} catch(Exception e) {
+    		logger.error("Cannot load log4j configuration file", e);
+    	}
     	
-    	logger.info("Test");
+    	logger.info("Starting couple account server");
     	
     	ResourceHandler staticContext = new ResourceHandler();
         staticContext.setDirectoriesListed(true);
