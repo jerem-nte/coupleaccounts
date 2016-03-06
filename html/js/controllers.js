@@ -8,7 +8,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 	$scope.defaultSelectedUser = 0;
 	$scope.transactions = [];
 	$scope.checkedTransactions = [];
-	$scope.userDebt = [];
+	$scope.debts = [];
 	$scope.label = "";
 	
 	
@@ -18,6 +18,13 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 			$scope.user = response[0].value;
 		});
 	}
+	
+	$scope.initCurrencyList = function() {	
+		$http.get("/currency/listhtmlselect").success(function(response) {
+			$scope.currencies = response;
+			$scope.currency = response[0].value;
+		});
+	}
   
   	$scope.getTransactions = function() {		
 		$http.get("/expense/list/notarchived").success(function(response) {$scope.transactions = response;});
@@ -25,11 +32,11 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
   	
 	$scope.addTransaction = function(isValid) {
 			
-		console.log("addTransaction(" + $scope.user + "," + $scope.label + "," + $scope.amount + "," + $scope.scope + ")" + isValid );
+		console.log("addTransaction(" + $scope.user + "," + $scope.label + "," + $scope.amount + "," + $scope.scope + "," + $scope.currency + ")" + isValid );
 		
 		if(isValid) {
 			
-		$http.post('/expense/add', {userId:$scope.user, label:$scope.label, amount:$scope.amount, scope:$scope.scope}).
+		$http.post('/expense/add', {userId:$scope.user, label:$scope.label, amount:$scope.amount, scope:$scope.scope, currencyId:$scope.currency}).
 	 	   	success(function(data, status, headers, config) {
 			   $scope.message.msg = data.message;
 			   $scope.message.status = data.status;		   
@@ -87,7 +94,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 		
 		$http.post('/expense/debt').
  	   	 success(function(data, status, headers, config) {
-		    $scope.userDebt = data;
+		    $scope.debts = data;
     	 }).
      	 error(function(data, status, headers, config) {
 		   $scope.message.msg = data.message;
@@ -104,6 +111,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 	
 	
 	$scope.initUserList();
+	$scope.initCurrencyList();
 	$scope.getTransactions();
 	$scope.getUserDebt();
 	

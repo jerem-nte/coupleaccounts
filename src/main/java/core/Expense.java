@@ -5,11 +5,12 @@ public class Expense {
 	private String id;
 	private String label;
 	private Double amount;
+	private Currency currency;
 	private String scope;
 	private User user;
 	private boolean archived;
 	
-	public Expense(String id, String label, Double amount, String scope, boolean archived, User user) {
+	public Expense(String id, String label, Double amount, String scope, boolean archived, User user, Currency currency) {
 		super();
 		this.id = id;
 		this.label = label;
@@ -17,6 +18,7 @@ public class Expense {
 		this.scope = scope;
 		this.user = user;
 		this.archived = archived;
+		this.currency = currency;
 	}
 
 	public String getId() {
@@ -66,6 +68,15 @@ public class Expense {
 	public void setArchived(boolean archived) {
 		this.archived = archived;
 	}
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
+	
 
 	
 }

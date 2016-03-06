@@ -1,8 +1,12 @@
 <div class="center">
 		
-		<div ng-show="userDebt.debt != 0" class="well well-sm" ng-class="{' pink' : userDebt.debit.gender == 'f', ' blue' : userDebt.debit.gender == 'm'}">{{userDebt.debit.name}} doit <b>{{userDebt.debt}} CHF</b> à {{userDebt.credit.name}}</div>	
 		
-		<div ng-show="userDebt.debt == 0" class="alert alert-success" role="alert">Les comptes sont à l'équilibre</div>	
+		<div ng-repeat="userDebt in debts">
+			<div ng-show="userDebt.debt != 0" class="well well-sm" ng-class="{' pink' : userDebt.debit.gender == 'f', ' blue' : userDebt.debit.gender == 'm'}">{{userDebt.debit.name}} doit <b>{{userDebt.debt}} {{userDebt.currency}}</b> à {{userDebt.credit.name}}</div>	
+		</div>
+		
+		
+		<!--<div ng-show="userDebt.debt == 0" class="alert alert-success" role="alert">Les comptes sont à l'équilibre</div>	  -->
 			
 		<div ng-show="message" class="alert" ng-class="{' alert-success' : message.status == 0, ' alert-danger' : message.status == 1}" role="alert">
 			{{message.msg}}
@@ -19,9 +23,16 @@
 						ng-options="user.value as user.name for user in users">
 				</select>
 				
-				<input id="inputlabel" class="form-control" placeholder="Label..." ng-model="label"> 
+				<input class="form-control has-error" name="amount" placeholder="Amount..." ng-model="amount" required >
+
+				<select id="selectcurrency"
+						class="form-control"
+						ng-show="currencies.length !== 0"
+	        			ng-model="currency"
+						ng-options="currency.value as currency.name for currency in currencies">
+				</select>
 				
-				<input class="form-control has-error" name="amount" placeholder="Amount..." ng-model="amount" required > 
+				<input id="inputlabel" class="form-control" placeholder="Label..." ng-model="label"> 
 				
 				<select id="selectscope" class="form-control" ng-model="scope">
 					<option selected value="0">All</option>
@@ -47,7 +58,7 @@
 			<tr ng-repeat="transaction in transactions">
 				<td class="name"><img ng-src="img\{{transaction.user.gender}}.png"> &nbsp; {{transaction.user.name}}</td>
 				<td class="trslabel">{{transaction.label}}</td>
-				<td class="amount">{{transaction.amount}} CHF</td>
+				<td class="amount">{{transaction.amount}} {{transaction.currency.shortname}}</td>
 				<td> <img ng-src="img\{{transaction.scope}}.png" /></td>
 				<td><button class="btn btn-danger btn-xs" ng-click="archiveTransaction(transaction.id)">Archive</button></td>
 				<td><button class="btn btn-danger btn-xs" ng-click="deleteTransaction(transaction.id)">Delete</button></td>

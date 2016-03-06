@@ -89,7 +89,7 @@ public class ExpenseResource {
     	}
     	
     	try {
-			ExpenseDao.addExpense(json.get("userId").asText(), json.get("label").asText(), amountDouble, json.get("scope").asText());
+			ExpenseDao.addExpense(json.get("userId").asText(), json.get("label").asText(), amountDouble, json.get("scope").asText(), json.get("currencyId").asText());
 		} catch (Exception e) {
 			return new ResponseDto(1, "Cannot add expense : " + e.getMessage());
 		}
@@ -101,12 +101,10 @@ public class ExpenseResource {
     @POST
     @Path("debt")
     @Produces(MediaType.APPLICATION_JSON)
-    public Debt getUserDebt() {
+    public List<Debt> getUserDebt() {
     	
     	DebtEngine de = new DebtEngine();
-    	Debt debt = de.compute();
-    	
-    	return debt;
+    	return de.compute();
     }
     
     
