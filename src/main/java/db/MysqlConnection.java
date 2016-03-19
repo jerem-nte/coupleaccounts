@@ -32,8 +32,6 @@ public class MysqlConnection {
 		
 		String url = "jdbc:mysql://" + host + ":" + port + "/" + base;
 		
-		logger.info("Database url = "+ url);
-		
 		Connection dbConnection = null;
 
 		try {
@@ -48,7 +46,7 @@ public class MysqlConnection {
 			return dbConnection;
 
 		} catch (SQLException e) {
-			logger.error("Cannot connect to database", e);
+			logger.error("Cannot connect to database, with url = " + url, e);
 		}
 
 		return dbConnection;
