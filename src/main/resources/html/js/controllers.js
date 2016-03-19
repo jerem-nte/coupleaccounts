@@ -7,10 +7,29 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 	$scope.message = {};
 	$scope.defaultSelectedUser = 0;
 	$scope.transactions = [];
-	$scope.checkedTransactions = [];
 	$scope.debts = [];
 	$scope.label = "";
+	$scope.allTransactionSelected = false;
 	
+	$scope.selectAllTransactions = function () {
+        // Loop through all the entities and set their isChecked property
+        for (var i = 0; i < $scope.transactions.length; i++) {
+            $scope.transactions[i].isChecked = $scope.allTransactionSelected;
+        }
+    };
+    
+    $scope.selectTransaction = function () {
+        // If any entity is not checked, then uncheck the "allItemsSelected" checkbox
+        for (var i = 0; i < $scope.transactions.length; i++) {
+            if (!$scope.transactions[i].isChecked) {
+                $scope.allTransactionSelected = false;
+                return;
+            }
+        }
+
+        //If not the check the "allItemsSelected" checkbox
+        $scope.allTransactionSelected = true;
+    };
 	
 	$scope.initUserList = function() {	
 		$http.get("/user/listhtmlselect").success(function(response) {
@@ -56,39 +75,58 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 		
 	}
 	
-	$scope.deleteTransaction = function(trsId) {
-			
-		console.log("deleteTransaction(" + trsId + ")");
+	$scope.deleteSelectedTransaction = function(trs) {
 		
-		$http.post('/expense/delete', {trsId:trsId}).
-	 	   	success(function(data, status, headers, config) {
- 			   $scope.message.msg = data.message;
- 			   $scope.message.status = data.status;
-			   $scope.getTransactions();
-			   $scope.getUserDebt();
-	    	}).
-	    	error(function(data, status, headers, config) {
- 			   $scope.message.msg = data.message;
- 			   $scope.message.status = data.status;
-	    	});
+		var selectedIds = [];
+		
+		angular.forEach(trs, function (item) {
+            if(item.isChecked) {
+            	selectedIds.push(item.id);
+            }
+        });
+
+		console.log("deleteSelectedTransaction("+selectedIds+")");
+		
+		$http.post('/expense/delete', {ids:selectedIds}).
+ 	   	success(function(data, status, headers, config) {
+			   $scope.message.msg = data.message;
+			   $scope.message.status = data.status;
+		   $scope.getTransactions();
+		   $scope.getUserDebt();
+    	}).
+    	error(function(data, status, headers, config) {
+			   $scope.message.msg = data.message;
+			   $scope.message.status = data.status;
+    	});
+		
 	}
 	
-	$scope.archiveTransaction = function(trsId) {
+	$scope.archiveSelectedTransaction = function(trs) {
 		
-		console.log("archiveTransaction(" + trsId + ")");
+		var selectedIds = [];
 		
-		$http.post('/expense/archive', {trsId:trsId}).
-	 	   	success(function(data, status, headers, config) {
- 			   $scope.message.msg = data.message;
- 			   $scope.message.status = data.status;
-			   $scope.getTransactions();
-			   $scope.getUserDebt();
-	    	}).
-	    	error(function(data, status, headers, config) {
- 			   $scope.message.msg = data.message;
- 			   $scope.message.status = data.status;
-	    	});
+		angular.forEach(trs, function (item) {
+            if(item.isChecked) {
+            	selectedIds.push(item.id);
+            }
+        });
+
+		console.log("archiveSelectedTransaction("+selectedIds+")");
+		
+		$http.post('/expense/archive', {ids:selectedIds}).
+ 	   	success(function(data, status, headers, config) {
+			   $scope.message.msg = data.message;
+			   $scope.message.status = data.status;
+		   $scope.getTransactions();
+		   $scope.getUserDebt();
+    	}).
+    	error(function(data, status, headers, config) {
+			   $scope.message.msg = data.message;
+			   $scope.message.status = data.status;
+    	});
+		
 	}
+
 	
 	$scope.getUserDebt = function() {
 		
@@ -123,26 +161,57 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', functio
 
 	$scope.message = {};
 	$scope.transactions = [];
-  
+	$scope.allTransactionSelected = false;
+	
+	$scope.selectAllTransactions = function () {
+        // Loop through all the entities and set their isChecked property
+        for (var i = 0; i < $scope.transactions.length; i++) {
+            $scope.transactions[i].isChecked = $scope.allTransactionSelected;
+        }
+    };
+    
+    $scope.selectTransaction = function () {
+        // If any entity is not checked, then uncheck the "allItemsSelected" checkbox
+        for (var i = 0; i < $scope.transactions.length; i++) {
+            if (!$scope.transactions[i].isChecked) {
+                $scope.allTransactionSelected = false;
+                return;
+            }
+        }
+
+        //If not the check the "allItemsSelected" checkbox
+        $scope.allTransactionSelected = true;
+    };
+	
+	
   	$scope.getTransactions = function() {		
 		$http.get("/expense/list/archived").success(function(response) {$scope.transactions = response;});
   	}
  
-	$scope.deleteTransaction = function(trsId) {
-			
-		console.log("deleteTransaction(" + trsId + ")");
+  	$scope.deleteSelectedTransaction = function(trs) {
 		
-		$http.post('/expense/delete', {trsId:trsId}).
-	 	   	success(function(data, status, headers, config) {
- 			   $scope.message.msg = data.message;
- 			   $scope.message.status = data.status;
-			   $scope.getTransactions();
-			   $scope.getUserDebt();
-	    	}).
-	    	error(function(data, status, headers, config) {
- 			   $scope.message.msg = data.message;
- 			   $scope.message.status = data.status;
-	    	});
+		var selectedIds = [];
+		
+		angular.forEach(trs, function (item) {
+            if(item.isChecked) {
+            	selectedIds.push(item.id);
+            }
+        });
+
+		console.log("deleteSelectedTransaction("+selectedIds+")");
+		
+		$http.post('/expense/delete', {ids:selectedIds}).
+ 	   	success(function(data, status, headers, config) {
+			   $scope.message.msg = data.message;
+			   $scope.message.status = data.status;
+		   $scope.getTransactions();
+		   $scope.getUserDebt();
+    	}).
+    	error(function(data, status, headers, config) {
+			   $scope.message.msg = data.message;
+			   $scope.message.status = data.status;
+    	});
+		
 	}
 	
 	

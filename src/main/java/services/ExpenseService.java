@@ -45,8 +45,13 @@ public class ExpenseService {
     @Consumes(MediaType.APPLICATION_JSON)
     public ResponseDto delete(JsonNode json) {
     	
+    	if(json.get("ids").size() == 0)
+    		return new ResponseDto(1, "Nothing to delete");
+    	
     	try {
-			ExpenseDao.deleteExpense(json.get("trsId").asText());
+    		for (final JsonNode id : json.get("ids")) {
+    			ExpenseDao.deleteExpense(id.asText());
+    	    }
 		} catch (Exception e) {
 			return new ResponseDto(1, "Cannot delete expense : " + e.getMessage());
 		}
@@ -60,8 +65,13 @@ public class ExpenseService {
     @Consumes(MediaType.APPLICATION_JSON)
     public ResponseDto archive(JsonNode json) {
     	
+    	if(json.get("ids").size() == 0)
+    		return new ResponseDto(1, "Nothing to archive");
+    	
     	try {
-			ExpenseDao.archiveExpense(json.get("trsId").asText());
+    		for (final JsonNode id : json.get("ids")) {
+    			ExpenseDao.archiveExpense(id.asText());
+    	    }
 		} catch (Exception e) {
 			return new ResponseDto(1, "Cannot archive expense : " + e.getMessage());
 		}

@@ -8,9 +8,12 @@
 	<script src="js/angular-route.js"></script>
 	<script src="js/app.js"></script>
 	<script src="js/controllers.js"></script>
+	<script src="js/jquery-1.11.2.min.js"></script>
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="menu.css">
 	<link rel="icon" href="favicon.ico" />
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
@@ -18,16 +21,65 @@
 
 <body>	
 	
-	<div class="center">
-		<img class="banner" src="img\test.png" />
-		<ul>
-	     	<li><a href="#/">Accueil</a></li>
-		    <li><a href="#/archives">Archives</a></li>
-		    <li><a href="#/configuration">Configuration</a></li>	
-		</ul>
-	</div>
-	
-	<div ng-view></div>
+	<div class="row">
+    <!-- uncomment code for absolute positioning tweek see top comment in css -->
+    <!-- <div class="absolute-wrapper"> </div> -->
+    <!-- Menu -->
+    <div class="side-menu">
+
+    	<nav class="navbar navbar-default" role="navigation">
+		    <!-- Brand and toggle get grouped for better mobile display -->
+		    <div class="navbar-header">
+		        <div class="brand-wrapper">
+		           
+		            <!-- Brand -->
+		            <div class="brand-name-wrapper">
+		                <a class="navbar-brand" href="#/">
+		                    Couple accounts
+		                </a>
+		            </div>
+		        </div>
+		
+		    </div>
+
+		    <!-- Main Menu -->
+		    <div class="side-menu-container">
+		        <ul class="nav navbar-nav">
+		
+		            <li class="active"><a href="#/"><span class="glyphicon glyphicon-piggy-bank"></span>Expenses</a></li>
+		            <li><a href="#/archives"><span class="glyphicon glyphicon-book"></span>Archived expenses</a></li>
+		
+		            <!-- Dropdown-->
+		            <li class="panel panel-default" id="dropdown">
+		                <a data-toggle="collapse" data-target="#dropdown-lvl1">
+		                    <span class="glyphicon glyphicon-cog"></span>Configuration<span class="caret"></span>
+		                </a>
+		
+		                <!-- Dropdown level 1 -->
+		                <div id="dropdown-lvl1" class="panel-collapse collapse">
+		                    <div class="panel-body">
+		                        <ul class="nav navbar-nav">
+		                            <li><a href="#"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+		                            <li><a href="#"><span class="glyphicon glyphicon-usd"></span> Currency</a></li>
+		                            <li><a href="#"><span class="glyphicon glyphicon-hdd"></span> Database</a></li>
+		                        </ul>
+		                    </div>
+		                </div>
+		            </li>
+		            
+		            <li><a href="#"><span class="glyphicon glyphicon-signal"></span>Statistics</a></li>
+		        </ul>
+		    </div><!-- /.navbar-collapse -->
+		</nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <div class="side-body">
+          <div ng-view></div>
+        </div>
+    </div>
+</div>
 		
 </body>
 
