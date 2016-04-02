@@ -33,7 +33,7 @@ public class RestServer {
     	 logger.info("Base path for static resources is " + basePath);
     	
     	ResourceHandler staticContext = new ResourceHandler();
-        staticContext.setDirectoriesListed(true);
+        staticContext.setDirectoriesListed(false);
         staticContext.setWelcomeFiles(new String[] { "index.html" });
         staticContext.setResourceBase(basePath);
        
