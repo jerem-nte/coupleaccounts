@@ -159,9 +159,34 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 
 coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', function ($scope, $http) {
 
+	$scope.page = 1;
+	$scope.pageMax = 1;
 	$scope.message = {};
 	$scope.transactions = [];
 	$scope.allTransactionSelected = false;
+	
+	$scope.nextPage = function () {
+		if($scope.page==$scope.pagemax)
+			return;
+		
+		$scope.page++;
+		$scope.getTransactions();
+    };
+    $scope.previousPage = function () {
+    	if($scope.page==1)
+			return;
+    	
+		$scope.page--;
+		$scope.getTransactions();
+		
+    };    
+    
+    $scope.getPageMax = function() {		
+		$http.get("/expense/list/archived/pagemax").
+		success(function(response) {
+			$scope.pagemax = response;
+		});
+  	};
 	
 	$scope.selectAllTransactions = function () {
         // Loop through all the entities and set their isChecked property
@@ -184,8 +209,13 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', functio
     };
 	
 	
-  	$scope.getTransactions = function() {		
-		$http.get("/expense/list/archived").success(function(response) {$scope.transactions = response;});
+  	$scope.getTransactions = function() {	
+  		$scope.getPageMax();
+  		
+		$http.get("/expense/list/archived",{params:{page:$scope.page}}).
+		success(function(response) {
+			$scope.transactions = response;
+		});
   	}
  
   	$scope.deleteSelectedTransaction = function(trs) {
@@ -214,10 +244,18 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', functio
 		
 	}
 	
-	
-	
-	
 	$scope.getTransactions();
 	
+}]);
+
+
+coupleAccountsControllers.controller('StatisticsCtrl', ['$scope', '$http', function ($scope, $http) {
+
+	 $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
+	  $scope.series = ['Series A', 'Series B'];
+	  $scope.data = [
+	    [65, 59, 80, 81, 56, 55, 40],
+	    [28, 48, 40, 19, 86, 27, 90]
+	  ];
 	
 }]);

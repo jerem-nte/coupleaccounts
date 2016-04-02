@@ -22,24 +22,33 @@
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<th><input type="checkbox" ng-model="allTransactionSelected"  ng-change="selectAllTransactions()"></th>
-				<th>Payeur</th>
-				<th>Description</th>
-				<th>Montant</th>
-				<th>Pour qui</th>
+				<th class="action"><input type="checkbox" ng-model="allTransactionSelected"  ng-change="selectAllTransactions()"></th>
+				<th class="name">Payeur</th>
+				<th class="trslabel">Description</th>
+				<th class="amount">Montant</th>
+				<th class="scope">Pour qui</th>
 			</tr>
 		</thead>
 		
 		<tr ng-repeat="transaction in transactions">
-			<td><input type="checkbox" ng-model="transaction.isChecked" ng-change="selectTransaction()"></td>
+			<td class="action"><input type="checkbox" ng-model="transaction.isChecked" ng-change="selectTransaction()"></td>
 			<td class="name"><img ng-src="img\{{transaction.user.gender}}.png"> &nbsp; {{transaction.user.name}}</td>
 			<td class="trslabel">{{transaction.label}}</td>
 			<td class="amount">{{transaction.amount}} {{transaction.currency.shortname}}</td>
-			<td> <img ng-src="img\{{transaction.scope}}.png" /></td>
+			<td class="scope"> <img ng-src="img\{{transaction.scope}}.png" /></td>
 		</tr>
 		
 		<tr  ng-show="transactions.length == 0"><td colspan="5">Aucune archive</td></tr>
 		
 	</table>
 	
+	
+	<nav>
+	  <ul class="pager">
+	    <li ng-class="{' disabled' :page == 1}"><a ng-click="previousPage()">Previous</a></li>
+	    {{page}}/{{pagemax}}
+	    <li ng-class="{' disabled' :page == pagemax}"><a ng-click="nextPage()">Next</a></li>
+	  </ul>
+	</nav>
+
 </div>

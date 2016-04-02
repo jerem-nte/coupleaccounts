@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.JsonNode;
@@ -26,17 +27,35 @@ public class ExpenseService {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Expense> listAll() {
     	
-		List<Expense> expenses = ExpenseDao.getExpenses(false);
+		List<Expense> expenses = ExpenseDao.getExpenses(false, -1);
 		return expenses; 
     }
 	
 	@GET
     @Path("list/archived")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Expense> listArchived() {
-    	
-		List<Expense> expenses = ExpenseDao.getExpenses(true);
+    public List<Expense> listArchived(@QueryParam("page") String pageParam) {
+		
+		Integer page = null;
+		try {
+    		page = new Integer(pageParam);
+		} catch (Exception e) {
+			page = new Integer(-1);
+		}
+		
+		List<Expense> expenses = ExpenseDao.getExpenses(true, page);
+		
 		return expenses; 
+    }
+	
+	@GET
+    @Path("list/archived/pagemax")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Integer pageMaxArchived() {
+		
+		Integer pageMax = ExpenseDao.getPageMax(true);
+		
+		return pageMax; 
     }
 	
     @POST

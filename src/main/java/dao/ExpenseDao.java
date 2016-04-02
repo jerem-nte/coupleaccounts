@@ -18,19 +18,26 @@ import db.MysqlConnection;
 
 public class ExpenseDao {
 	
+	private static final int PAGE_SIZE = 15;
 	private static Logger logger = Logger.getLogger(ExpenseDao.class);
 
-	public static List<Expense> getExpenses(boolean archived) {
+	public static List<Expense> getExpenses(boolean archived, int page) {
 		
 		List<Expense> expenseList = new ArrayList<Expense>();
 
-		String sql = "SELECT trs.id as trsId, trs.label, trs.amount, trs.scope, trs.archived, usrs.id as userId, trs.currency_id, usrs.name, usrs.gender FROM transactions trs JOIN users usrs on trs.user_id = usrs.id WHERE trs.archived=" + archived;
+		StringBuilder sqlSb = new StringBuilder("SELECT trs.id as trsId, trs.label, trs.amount, trs.scope, trs.archived, usrs.id as userId, trs.currency_id, usrs.name, usrs.gender");
+		sqlSb.append(" FROM transactions trs");
+		sqlSb.append(" JOIN users usrs on trs.user_id = usrs.id ");
+		sqlSb.append(" WHERE trs.archived=").append(archived);
+		sqlSb.append(" ORDER BY trs.id DESC");
+		if(page > 0)
+			sqlSb.append(" LIMIT ").append(PAGE_SIZE).append(" OFFSET ").append((page-1)*PAGE_SIZE);
 		
 		Connection c = MysqlConnection.getConnection();
 		ResultSet r;
 		
 		try {
-			r = c.createStatement().executeQuery(sql);
+			r = c.createStatement().executeQuery(sqlSb.toString());
 		
 			while (r.next()) {
 				Expense e = new Expense(r.getString("trsId"), r.getString("label"), r.getDouble("amount"), r.getString("scope"), r.getBoolean("archived"), new User(r.getString("userId"), r.getString("name"), r.getString("gender")), CurrencyDao.getCurrency(r.getString("currency_id")));
@@ -49,6 +56,37 @@ public class ExpenseDao {
 		}
 		
 		return expenseList;
+	}
+	
+	
+	public static Integer getPageMax(boolean archived) {
+		
+		Integer nbTrs = 1;
+
+		StringBuilder sqlSb = new StringBuilder("SELECT count(trs.id) as nbTrs");
+		sqlSb.append(" FROM transactions trs");
+		sqlSb.append(" WHERE trs.archived=").append(archived);
+		
+		Connection c = MysqlConnection.getConnection();
+		ResultSet r;
+		
+		try {
+			r = c.createStatement().executeQuery(sqlSb.toString());
+		
+			if(r.next()) {
+				nbTrs = r.getInt("nbTrs");
+			}
+		} catch (SQLException e) {
+			logger.error("Cannot retreive users from database", e);;
+		} finally {
+			try {
+				c.close();
+			} catch (SQLException e) {
+				logger.error("Cannot close connection", e);
+			}
+		}
+		
+		return (int)Math.ceil((double)nbTrs/PAGE_SIZE);
 	}
 	
 	
