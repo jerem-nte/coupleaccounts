@@ -1,8 +1,8 @@
 var coupleAccountsControllers = angular.module('coupleAccountsControllers', []);
 
-coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', function ($scope, $http) {
+coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q) {
 
-
+	$scope.loading = true;
 	$scope.scope = "0";
 	$scope.message = {};
 	$scope.defaultSelectedUser = 0;
@@ -32,21 +32,24 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
     };
 	
 	$scope.initUserList = function() {	
-		$http.get("/user/listhtmlselect").success(function(response) {
+		var promise = $http.get("/user/listhtmlselect").success(function(response) {
 			$scope.users = response;
 			$scope.user = response[0].value;
 		});
+		return promise;
 	}
 	
 	$scope.initCurrencyList = function() {	
-		$http.get("/currency/listhtmlselect").success(function(response) {
+		var promise = $http.get("/currency/listhtmlselect").success(function(response) {
 			$scope.currencies = response;
 			$scope.currency = response[0].value;
 		});
+		return promise;
 	}
   
   	$scope.getTransactions = function() {		
-		$http.get("/expense/list/notarchived").success(function(response) {$scope.transactions = response;});
+  		var promise = $http.get("/expense/list/notarchived").success(function(response) {$scope.transactions = response;});
+  		return promise;
   	}
   	
 	$scope.addTransaction = function(isValid) {
@@ -130,7 +133,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 	
 	$scope.getUserDebt = function() {
 		
-		$http.post('/expense/debt').
+		var promise = $http.post('/expense/debt').
  	   	 success(function(data, status, headers, config) {
 		    $scope.debts = data;
     	 }).
@@ -138,6 +141,8 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 		   $scope.message.msg = data.message;
 		   $scope.message.status = data.status;
     	 });
+		
+		return promise;
 	}
 	
 	$scope.cleanForm = function() {
@@ -147,12 +152,21 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', fun
 		$scope.amount = "";
 	}
 	
+	$scope.init = function() {
+		
+		var promises = [];
+		
+		promises.push($scope.initUserList());
+		promises.push($scope.initCurrencyList());
+		promises.push($scope.getTransactions());
+		promises.push($scope.getUserDebt());
+		
+		$q.all(promises).then(function() {
+			$scope.loading = false;
+		});
+	}
 	
-	$scope.initUserList();
-	$scope.initCurrencyList();
-	$scope.getTransactions();
-	$scope.getUserDebt();
-	
+	$scope.init();
 	
 }]);
 
@@ -249,13 +263,47 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', functio
 }]);
 
 
+coupleAccountsControllers.controller('YesNoController', ['$scope', 'close', function($scope, close) {
+
+	  $scope.close = function(result) {
+	 	  close(result, 500); // close, but give 500ms for bootstrap to animate
+	  };
+
+}]);
+
+
+
+coupleAccountsControllers.controller('UsersCtrl', ['$scope', '$http', 'ModalService', function ($scope, $http, ModalService) {
+	
+	 $scope.showYesNo = function() {
+
+		    ModalService.showModal({
+		      templateUrl: "partials/edituser.html",
+		      controller: "YesNoController"
+		    }).then(function(modal) {
+		      modal.element.modal();
+		      modal.close.then(function(result) {
+		        $scope.yesNoResult = result ? "You said Yes" : "You said No";
+		      });
+		    });
+
+	 };
+
+
+	 $scope.users = [];
+	 
+	 $http.get("/user/list",{params:{page:$scope.page}}).
+		success(function(response) {
+			$scope.users = response;
+	 });
+	
+}]);
+
+
+
 coupleAccountsControllers.controller('StatisticsCtrl', ['$scope', '$http', function ($scope, $http) {
 
-	 $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-	  $scope.series = ['Series A', 'Series B'];
-	  $scope.data = [
-	    [65, 59, 80, 81, 56, 55, 40],
-	    [28, 48, 40, 19, 86, 27, 90]
-	  ];
+	 $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
+	 $scope.data = [300, 500, 100];
 	
 }]);

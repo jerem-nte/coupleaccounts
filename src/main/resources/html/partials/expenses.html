@@ -1,6 +1,6 @@
-<div class="center">
-		
-		
+	<div class="center" ng-show="loading">Loading, please wait...</div>
+	<div class="center" ng-show="!loading" >
+	
 		<div ng-repeat="userDebt in debts">
 			<div ng-show="userDebt.debt != 0" class="well well-sm" ng-class="{' pink' : userDebt.debit.gender == 'f', ' blue' : userDebt.debit.gender == 'm'}">{{userDebt.debit.name}} doit <b>{{userDebt.debt}} {{userDebt.currency}}</b> à {{userDebt.credit.name}}</div>	
 		</div>
@@ -90,5 +90,4 @@
 			<tr  ng-show="transactions.length == 0"><td colspan="5">Aucune transaction en cours</td></tr>
 			
 		</table>
-		
 	</div>
