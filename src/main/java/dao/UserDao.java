@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class UserDao {
 	}
 	
 	
-	private static User getUser(String userId) {
+	public static User getUser(String userId) {
 		
 		User u = null;
 		
@@ -73,6 +74,37 @@ public class UserDao {
 		}
 		
 		return u;
+	}
+	
+	public static void update(User user) throws Exception {
+		
+		Connection c = MysqlConnection.getConnection();
+		PreparedStatement prep;
+		
+		try {
+			prep = c.prepareStatement("UPDATE users SET name = ? WHERE id = ?");
+			prep.setString(1, user.getName());
+			prep.setString(2, user.getId());
+			logger.debug("Update = " + prep);
+		} catch (SQLException e) {
+			logger.error("Cannot prepare SQL query for updating a user", e);
+			throw new Exception("Cannot prepare SQL query for updating a user");
+		} 
+		
+		try {
+			prep.executeUpdate();
+		} catch (SQLException e) {
+			logger.error("Error while updating user", e);
+			throw new Exception("Error while updating user");
+		} finally {
+			try {
+				c.close();
+			} catch (SQLException e) {
+				logger.error("Cannot close connection", e);
+				throw new Exception("Error while updating user");
+			}
+		}
+		
 	}
 	
 	public static User getFirstUser() {
