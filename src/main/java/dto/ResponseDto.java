@@ -3,12 +3,12 @@ package dto;
 public class ResponseDto {
 
 	private int status;
-	private String message;
+	private String content;
 	
 	
-	public ResponseDto(int status, String message) {
+	public ResponseDto(int status, String content) {
 		this.status = status;
-		this.message = message;
+		this.content = content;
 	}
 	
 	
@@ -18,11 +18,11 @@ public class ResponseDto {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public String getMessage() {
-		return message;
+	public String getContent() {
+		return content;
 	}
-	public void setMessage(String message) {
-		this.message = message;
+	public void setContent(String content) {
+		this.content = content;
 	}
 	
 	

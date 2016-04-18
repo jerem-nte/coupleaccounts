@@ -47,8 +47,7 @@ coupleAccountsControllers.controller('UsersCtrl', ['$scope', '$http', '$uibModal
 		});
 		
 		modalInstance.result.then(function (data) {
-			$scope.message.msg = data.message;
-			$scope.message.status = data.status;
+			$scope.message = data;
 			$scope.loadUsers();
 		    }, function () {
 		      console.log("Closed edit user modal");

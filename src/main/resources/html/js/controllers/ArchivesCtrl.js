@@ -73,14 +73,11 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', functio
 		
 		$http.post('/expense/delete', {ids:selectedIds}).
  	   	success(function(data, status, headers, config) {
-			   $scope.message.msg = data.message;
-			   $scope.message.status = data.status;
-		   $scope.getTransactions();
-		   $scope.getUserDebt();
+ 	   		$scope.message = data;
+ 	   		$scope.getTransactions();
     	}).
     	error(function(data, status, headers, config) {
-			   $scope.message.msg = data.message;
-			   $scope.message.status = data.status;
+    		$scope.message = data;
     	});
 		
 	}

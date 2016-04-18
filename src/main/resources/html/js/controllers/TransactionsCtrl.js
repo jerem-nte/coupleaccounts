@@ -56,22 +56,20 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		
 		if(isValid) {
 			
-		$http.post('/expense/add', {userId:$scope.user, label:$scope.label, amount:$scope.amount, scope:$scope.scope, currencyId:$scope.currency}).
-	 	   	success(function(data, status, headers, config) {
-			   $scope.message.msg = data.message;
-			   $scope.message.status = data.status;		   
-			   $scope.getTransactions();
-			   $scope.getUserDebt();
-			   
-			   if(data.status == "0") {		   	
-				   $scope.cleanForm();
-			   }
-	    	}).
-	    	error(function(data, status, headers, config) {
- 			   $scope.message.msg = data.message;
- 			   $scope.message.status = data.status;
-	    	});
-			
+			$http.post('/expense/add', {userId:$scope.user, label:$scope.label, amount:$scope.amount, scope:$scope.scope, currencyId:$scope.currency}).
+				success(function(data, status, headers, config) {
+					$scope.message = data;
+					$scope.getTransactions();
+					$scope.getUserDebt();
+				   
+					if(data.status == "0") {		   	
+						$scope.cleanForm();
+					}
+		    	}).
+		    	error(function(data, status, headers, config) {
+		    		$scope.message = data;
+		    	}
+		    );
 		}
 		
 	}
@@ -90,14 +88,12 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		
 		$http.post('/expense/delete', {ids:selectedIds}).
  	   	success(function(data, status, headers, config) {
-			   $scope.message.msg = data.message;
-			   $scope.message.status = data.status;
+		   $scope.message = data;
 		   $scope.getTransactions();
 		   $scope.getUserDebt();
     	}).
     	error(function(data, status, headers, config) {
-			   $scope.message.msg = data.message;
-			   $scope.message.status = data.status;
+		   $scope.message = data;
     	});
 		
 	}
@@ -116,14 +112,12 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		
 		$http.post('/expense/archive', {ids:selectedIds}).
  	   	success(function(data, status, headers, config) {
-			   $scope.message.msg = data.message;
-			   $scope.message.status = data.status;
+		   $scope.message = data;
 		   $scope.getTransactions();
 		   $scope.getUserDebt();
     	}).
     	error(function(data, status, headers, config) {
-			   $scope.message.msg = data.message;
-			   $scope.message.status = data.status;
+		   $scope.message = data;
     	});
 		
 	}
@@ -132,13 +126,12 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 	$scope.getUserDebt = function() {
 		
 		var promise = $http.post('/expense/debt').
- 	   	 success(function(data, status, headers, config) {
-		    $scope.debts = data;
-    	 }).
-     	 error(function(data, status, headers, config) {
-		   $scope.message.msg = data.message;
-		   $scope.message.status = data.status;
-    	 });
+		success(function(data, status, headers, config) {
+			$scope.debts = data;
+		}).
+		error(function(data, status, headers, config) {
+			$scope.message = data;
+		});
 		
 		return promise;
 	}
