@@ -1,49 +1,61 @@
-coupleAccountsControllers.controller('EditUserController', ['$scope', '$http', 'userParam', 'close', function($scope, $http, userParam, close) {
+coupleAccountsControllers.controller('EditUserCtrl', function ($scope, $http, $uibModalInstance, user) {
 
-	$scope.edituser = userParam;
+	$scope.name = user.name;
+	$scope.id = user.id;
 	
-	$scope.close = function(result) {
-		
-		if(result) {
-			$http.get('/user/edit', {params:{id:$scope.edituser.id, name:$scope.edituser.name}}).
-	 	   	success(function(data, status, headers, config) {
-	 	   		close(data, 500); // close, but give 500ms for bootstrap to animate
-	    	}).
-	    	error(function(data, status, headers, config) {
-	    		close(data, 500);
-	    	});
-		} else {
-			close(result, 500);
-		}
-		
+	$scope.ok = function () {
+		$http.get('/user/edit', {params:{id:$scope.id, name:$scope.name}}).
+ 	   	success(function(data, status, headers, config) {
+ 	   		$uibModalInstance.close(data);
+    	}).
+    	error(function(data, status, headers, config) {
+    		$uibModalInstance.close(data);
+    	});
 	};
-}]);
+
+	$scope.cancel = function () {
+		$uibModalInstance.dismiss();
+	};
+});
 
 
 
-coupleAccountsControllers.controller('UsersCtrl', ['$scope', '$http', 'ModalService', function ($scope, $http, ModalService) {
+coupleAccountsControllers.controller('UsersCtrl', ['$scope', '$http', '$uibModal', function ($scope, $http, $uibModal) {
 	
 	$scope.message = {};
 	$scope.users = [];
 	 
-	$http.get("/user/list",{params:{page:$scope.page}}).
-		success(function(response) {
-			$scope.users = response;
-		});
+	$scope.loadUsers = function() {
+		$http.get("/user/list",{params:{page:$scope.page}}).
+			success(function(response) {
+				$scope.users = response;
+			});
+	}
 	
 	$scope.showEditUser = function(user) {
-
-		ModalService.showModal({
+		
+		var modalInstance = $uibModal.open({
+			animation: true,
 			templateUrl: "partials/edituser.html",
-			controller: "EditUserController",
-			inputs: {userParam: user}
-		}).then(function(modal) {
-			modal.element.modal();
-			modal.close.then(function(result) {
-				$scope.message.msg = result.message;
-				$scope.message.status = result.status;
-			});
+			controller: 'EditUserCtrl',
+			size: 'sm',
+			resolve: {
+				user: function () {
+					return user;
+				}
+			}
 		});
-
-	 };
+		
+		modalInstance.result.then(function (data) {
+			$scope.message.msg = data.message;
+			$scope.message.status = data.status;
+			$scope.loadUsers();
+		    }, function () {
+		      console.log("Closed edit user modal");
+		    }
+		);
+	};
+	
+	$scope.loadUsers();
+	
 }]);

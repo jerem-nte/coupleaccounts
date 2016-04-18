@@ -1,4 +1,4 @@
-var coupleAccountsApp = angular.module('coupleAccountsApp', ['ngRoute', 'coupleAccountsControllers', 'chart.js', 'ngAnimate', 'angularModalService']);
+var coupleAccountsApp = angular.module('coupleAccountsApp', ['ngRoute', 'coupleAccountsControllers', 'chart.js', 'ngAnimate', 'ui.bootstrap']);
 
 coupleAccountsApp.config(['$routeProvider',
                           function($routeProvider) {
