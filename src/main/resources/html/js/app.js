@@ -23,3 +23,5 @@ coupleAccountsApp.config(['$routeProvider',
       	                          redirectTo: '/'
       	                        });
                           	}]);
+
+var coupleAccountsControllers = angular.module('coupleAccountsControllers', []);
