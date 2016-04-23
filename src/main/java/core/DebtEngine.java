@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import dao.CurrencyDao;
 import dao.ExpenseDao;
 import dao.UserDao;
 
@@ -36,10 +37,10 @@ public class DebtEngine {
 			
 			if(firstUserExpense.compareTo(secondUserExpense) == 1) {
 				logger.info(second.getName() + " must pay " + firstUserExpense.subtract(secondUserExpense) + " " + entry.getKey());
-				debts.add( new Debt(second, first, firstUserExpense.subtract(secondUserExpense), entry.getKey()) );
+				debts.add( new Debt(second, first, firstUserExpense.subtract(secondUserExpense), CurrencyDao.getCurrency(entry.getKey())) );
 			} else {
 				logger.info(first.getName() + " must pay " + secondUserExpense.subtract(firstUserExpense) + " " + entry.getKey());
-				debts.add( new Debt(first, second, secondUserExpense.subtract(firstUserExpense), entry.getKey()) );
+				debts.add( new Debt(first, second, secondUserExpense.subtract(firstUserExpense), CurrencyDao.getCurrency(entry.getKey())) );
 			} 
 		}
 		

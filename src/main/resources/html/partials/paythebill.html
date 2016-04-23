@@ -1,0 +1,18 @@
+<div class="modal-header">
+	<h3 class="modal-title">Remboursement des dettes</h3>
+</div>
+
+<div class="modal-body">
+	<div ng-repeat="userDebt in debts">
+		<ul>
+			<div ng-show="userDebt.debt != 0" ng-class="{' pink' : userDebt.debit.gender == 'f', ' blue' : userDebt.debit.gender == 'm'}">
+				<li>{{userDebt.debit.name}} déclare avoir remboursé <b>{{userDebt.debt}} {{userDebt.currency.shortname}}</b> à {{userDebt.credit.name}}</li>
+			</div>
+		</ul>	
+	</div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="ok()">Paid</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

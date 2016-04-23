@@ -7,10 +7,10 @@ public class Debt {
 	private User debit;
 	private User credit;
 	private BigDecimal debt;
-	private String currency;
+	private Currency currency;
 	
 	
-	public Debt(User debit, User credit, BigDecimal debt, String currency) {
+	public Debt(User debit, User credit, BigDecimal debt, Currency currency) {
 		super();
 		this.debit = debit;
 		this.credit = credit;
@@ -37,10 +37,10 @@ public class Debt {
 	public void setDebt(BigDecimal debt) {
 		this.debt = debt;
 	}
-	public String getCurrency() {
+	public Currency getCurrency() {
 		return currency;
 	}
-	public void setCurrency(String currency) {
+	public void setCurrency(Currency currency) {
 		this.currency = currency;
 	}
 	

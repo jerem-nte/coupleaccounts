@@ -1,4 +1,4 @@
-coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', function ($scope, $http, $q) {
+coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', '$uibModal', function ($scope, $http, $q, $uibModal) {
 
 	$scope.loading = true;
 	$scope.scope = "0";
@@ -157,6 +157,53 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		});
 	}
 	
+	$scope.showPayTheBill = function() {
+		
+		var modalInstance = $uibModal.open({
+			animation: true,
+			templateUrl: "partials/paythebill.html",
+			controller: 'PayTheBillCtrl',
+			size: 'lg',
+			resolve: {
+				debts: function () {
+					return $scope.debts;
+				}
+			}
+		});
+		
+		modalInstance.result.then(function (data) {
+			$scope.message = data;
+			$scope.getTransactions();
+			$scope.getUserDebt();
+		    }, function () {}
+		);
+	};
+	
 	$scope.init();
 	
 }]);
+
+
+
+
+coupleAccountsControllers.controller('PayTheBillCtrl', function ($scope, $http, $uibModalInstance, debts) {
+
+	$scope.debts = debts;
+	
+	$scope.ok = function () {
+		$scope.debts.filter(function(debt){return debt.debt!=0;}).forEach(function(debt) {
+			$http.post('/expense/add', {userId:debt.debit.id, label:'Remboursement des dettes', amount: debt.debt, scope:1, currencyId:debt.currency.id}).
+				success(function(data, status, headers, config) {
+					$uibModalInstance.close(data);
+		    	}).
+		    	error(function(data, status, headers, config) {
+		    		$uibModalInstance.close(data);
+		    	}
+	    	);
+		});
+	};
+
+	$scope.cancel = function () {
+		$uibModalInstance.dismiss();
+	};
+});

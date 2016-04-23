@@ -2,7 +2,10 @@
 	<div class="center" ng-show="!loading" >
 	
 		<div ng-repeat="userDebt in debts">
-			<div ng-show="userDebt.debt != 0" class="well well-sm" ng-class="{' pink' : userDebt.debit.gender == 'f', ' blue' : userDebt.debit.gender == 'm'}">{{userDebt.debit.name}} doit <b>{{userDebt.debt}} {{userDebt.currency}}</b> à {{userDebt.credit.name}}</div>	
+			<div ng-show="userDebt.debt != 0" class="well well-sm" ng-class="{' pink' : userDebt.debit.gender == 'f', ' blue' : userDebt.debit.gender == 'm'}">
+				{{userDebt.debit.name}} doit <b>{{userDebt.debt}} {{userDebt.currency.shortname}}</b> à {{userDebt.credit.name}}
+				<button type="button" class="btn btn-link text-right" ng-click="showPayTheBill()">Procéder au remboursement</button>
+			</div>	
 		</div>
 		
 		

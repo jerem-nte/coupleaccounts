@@ -95,7 +95,7 @@ public class ExpenseDao {
 		String sql = "INSERT INTO transactions (user_id, label, amount, scope, archived, currency_id) values (%s, '%s', %s, '%s', false, '%s')";
 		sql = String.format(sql, userId, label, amount, scope, currencyId);
 		logger.info("Add = " + sql);
-		
+
 		Connection c = MysqlConnection.getConnection();
 		
 		try {
@@ -161,11 +161,11 @@ public class ExpenseDao {
 		
 		// Init a value for each currency. TODO: handle that in SQL request
 		for (Currency curr : CurrencyDao.getCurrencies()) {
-			expenses.put(curr.getShortname(), new BigDecimal(0));
+			expenses.put(curr.getId(), new BigDecimal(0));
 		}
 		
-		String sql = "SELECT COALESCE(sum(amount), 0) AS sum_amount, curr.shortname AS currency FROM transactions trs JOIN currency curr on trs.currency_id=curr.id WHERE scope='1' AND archived=false AND user_id=" + u.getId() + " GROUP BY currency_id";
-		String sql_shared = "SELECT COALESCE(sum(amount)/2, 0) AS sum_amount, curr.shortname AS currency FROM transactions trs JOIN currency curr on trs.currency_id=curr.id WHERE scope='0' AND archived=false AND user_id=" + u.getId() + " GROUP BY currency_id";
+		String sql = "SELECT COALESCE(sum(amount), 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='1' AND archived=false AND user_id=" + u.getId() + " GROUP BY currency_id";
+		String sql_shared = "SELECT COALESCE(sum(amount)/2, 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='0' AND archived=false AND user_id=" + u.getId() + " GROUP BY currency_id";
 		
 		Connection c = MysqlConnection.getConnection();
 		ResultSet r;
@@ -175,12 +175,12 @@ public class ExpenseDao {
 			r = c.createStatement().executeQuery(sql);
 			//For each currency
 			while(r.next()) {
-				expenses.put(r.getString("currency"), expenses.get(r.getString("currency")).add(r.getBigDecimal("sum_amount")));
+				expenses.put(r.getString("currency_id"), expenses.get(r.getString("currency_id")).add(r.getBigDecimal("sum_amount")));
 			}
 			r = c.createStatement().executeQuery(sql_shared);
 			//For each currency
 			while(r.next()) {
-				expenses.put(r.getString("currency"), expenses.get(r.getString("currency")).add(r.getBigDecimal("sum_amount")).setScale(2, BigDecimal.ROUND_HALF_UP));
+				expenses.put(r.getString("currency_id"), expenses.get(r.getString("currency_id")).add(r.getBigDecimal("sum_amount")).setScale(2, BigDecimal.ROUND_HALF_UP));
 			}
 		} catch (SQLException e) {
 			logger.error("Cannot retreive users from database", e);
