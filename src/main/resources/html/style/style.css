@@ -1,4 +1,19 @@
-
+.repeat-item.ng-enter,
+    .repeat-item.ng-leave {
+      -webkit-transition: 0.5s linear all;
+      transition: 2s linear all;
+    }
+    
+    .repeat-item.ng-enter,
+    .repeat-item.ng-leave.ng-leave-active {
+      opacity: 0;
+    }
+    
+    .repeat-item.ng-leave,
+    .repeat-item.ng-enter.ng-enter-active {
+      opacity: 1;
+    }
+    
 .pink {
 	
 	color: #DF01D7;
@@ -40,4 +55,10 @@
 #usertable {
 	width: 50%;
 }	
+
+.center-loading {
+	position: absolute;
+	top: 50%;
+	right:50%;
+}
 	

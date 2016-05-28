@@ -1,19 +1,15 @@
-	<div class="center" ng-show="loading">Loading, please wait...</div>
+	<div class="center-loading" ng-show="loading">Loading, please wait...</div>
 	<div class="center" ng-show="!loading" >
 	
-		<div ng-repeat="userDebt in debts">
-			<div ng-show="userDebt.debt != 0" class="well well-sm" ng-class="{' pink' : userDebt.debit.gender == 'f', ' blue' : userDebt.debit.gender == 'm'}">
+		<div class="well well-sm">
+			<p ng-repeat="userDebt in debts"  ng-show="userDebt.debt != 0"  ng-class="{' pink' : userDebt.debit.gender == 'f', ' blue' : userDebt.debit.gender == 'm'}">
 				{{userDebt.debit.name}} doit <b>{{userDebt.debt}} {{userDebt.currency.shortname}}</b> à {{userDebt.credit.name}}
-				<button type="button" class="btn btn-link text-right" ng-click="showPayTheBill()">Procéder au remboursement</button>
-			</div>	
+			</p>	
+			<a class="btn-link" ng-click="showPayTheBill()">Procéder au remboursement de toutes les dettes</a>
 		</div>
 		
-		
-		<div ng-show="debts[0].debt == 0" class="alert alert-success" role="alert">Les comptes sont à l'équilibre</div>
 
-		<div ng-show="message.content" class="alert" ng-class="{' alert-success' : message.status == 0, ' alert-danger' : message.status == 1}" role="alert">
-			{{message.content}}
-		</div>
+		<uib-alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)" dismiss-on-timeout="5000" class="repeat-item">{{alert.content}}</uib-alert>
 		
 		<div class="page-header">
 		  <h3>Ajouter une transactions</h3>

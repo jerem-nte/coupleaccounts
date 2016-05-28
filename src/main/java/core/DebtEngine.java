@@ -38,7 +38,7 @@ public class DebtEngine {
 			if(firstUserExpense.compareTo(secondUserExpense) == 1) {
 				logger.info(second.getName() + " must pay " + firstUserExpense.subtract(secondUserExpense) + " " + entry.getKey());
 				debts.add( new Debt(second, first, firstUserExpense.subtract(secondUserExpense), CurrencyDao.getCurrency(entry.getKey())) );
-			} else {
+			} else if(firstUserExpense.compareTo(secondUserExpense) == -1) {
 				logger.info(first.getName() + " must pay " + secondUserExpense.subtract(firstUserExpense) + " " + entry.getKey());
 				debts.add( new Debt(first, second, secondUserExpense.subtract(firstUserExpense), CurrencyDao.getCurrency(entry.getKey())) );
 			} 
