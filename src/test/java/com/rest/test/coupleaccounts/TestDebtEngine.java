@@ -1,6 +1,6 @@
 package com.rest.test.coupleaccounts;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -88,7 +88,7 @@ public class TestDebtEngine {
 		secondUserExpenses.put("EUR", new BigDecimal("20.025").setScale(2,  BigDecimal.ROUND_HALF_UP));
 		
 		debts = engine.compute();
-		assertTrue(debts.get(0).getDebt().compareTo(new BigDecimal("0")) == 0);
+		assertTrue(debts.isEmpty());
 	}
 	
 	@Test
@@ -101,7 +101,7 @@ public class TestDebtEngine {
 		secondUserExpenses.put("EUR", new BigDecimal("0").setScale(2,  BigDecimal.ROUND_HALF_UP));
 		
 		debts = engine.compute();
-		assertTrue(debts.get(0).getDebt().compareTo(new BigDecimal("0")) == 0);
+		assertTrue(debts.isEmpty());
 	}
 	
 	@Test
