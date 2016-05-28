@@ -1,4 +1,4 @@
-coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', '$uibModal', function ($scope, $http, $q, $uibModal) {
+coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', '$uibModal', '$animate', function ($scope, $http, $q, $uibModal) {
 
 	$scope.loading = true;
 	$scope.scope = "0";
@@ -8,6 +8,12 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 	$scope.debts = [];
 	$scope.label = "";
 	$scope.allTransactionSelected = false;
+	$scope.alerts = [];
+	
+	
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
 	
 	$scope.selectAllTransactions = function () {
         // Loop through all the entities and set their isChecked property
@@ -58,7 +64,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 			
 			$http.post('/expense/add', {userId:$scope.user, label:$scope.label, amount:$scope.amount, scope:$scope.scope, currencyId:$scope.currency}).
 				success(function(data, status, headers, config) {
-					$scope.message = data;
+					$scope.alerts.push(data);
 					$scope.getTransactions();
 					$scope.getUserDebt();
 				   
@@ -67,7 +73,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 					}
 		    	}).
 		    	error(function(data, status, headers, config) {
-		    		$scope.message = data;
+		    		$scope.alerts.push(data);
 		    	}
 		    );
 		}
@@ -88,12 +94,12 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		
 		$http.post('/expense/delete', {ids:selectedIds}).
  	   	success(function(data, status, headers, config) {
-		   $scope.message = data;
+ 	   		$scope.alerts.push(data);
 		   $scope.getTransactions();
 		   $scope.getUserDebt();
     	}).
     	error(function(data, status, headers, config) {
-		   $scope.message = data;
+    		$scope.alerts.push(data);
     	});
 		
 	}
@@ -112,12 +118,12 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		
 		$http.post('/expense/archive', {ids:selectedIds}).
  	   	success(function(data, status, headers, config) {
-		   $scope.message = data;
-		   $scope.getTransactions();
-		   $scope.getUserDebt();
+ 	   		$scope.alerts.push(data);
+ 	   		$scope.getTransactions();
+ 	   		$scope.getUserDebt();
     	}).
     	error(function(data, status, headers, config) {
-		   $scope.message = data;
+    		$scope.alerts.push(data);
     	});
 		
 	}
@@ -130,7 +136,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 			$scope.debts = data;
 		}).
 		error(function(data, status, headers, config) {
-			$scope.message = data;
+			$scope.alerts.push(data);
 		});
 		
 		return promise;
@@ -172,7 +178,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		});
 		
 		modalInstance.result.then(function (data) {
-			$scope.message = data;
+			$scope.alerts.push(data);
 			$scope.getTransactions();
 			$scope.getUserDebt();
 		    }, function () {}
