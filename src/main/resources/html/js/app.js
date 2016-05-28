@@ -15,7 +15,11 @@ coupleAccountsApp.config(['$routeProvider',
       	                          templateUrl: 'partials/users.html',
       	                          controller: 'UsersCtrl'
       	                        }).
-      	                      when('/statistics', {
+      	                        when('/database', {
+      	                          templateUrl: 'partials/database.html',
+      	                          controller: 'DatabaseCtrl'
+      	                        }).
+      	                        when('/statistics', {
       	                          templateUrl: 'partials/statistics.html',
       	                          controller: 'StatisticsCtrl'
       	                        }).

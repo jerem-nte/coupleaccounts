@@ -51,5 +51,25 @@ public class MysqlConnection {
 
 		return dbConnection;
 	}
+	
+	public static void testConnection(String host, String port, String base, String user, String pass) throws Exception {
+		
+		String url = "jdbc:mysql://" + host + ":" + port + "/" + base;
+		
+		try {
+			Class.forName(DB_DRIVER);
+		} catch (ClassNotFoundException e) {
+			logger.error("Cannot find database driver", e);
+			throw new Exception("Cannot test connection as no database driver is defined");
+		}
+		
+		try {
+			DriverManager.getConnection(url, user, pass);
+		} catch (SQLException e) {
+			logger.error("Cannot connect to database, with url = " + url, e);
+			throw new Exception("Cannot connect to database : " + e.getMessage());
+		}
+		
+	}
 
 }
