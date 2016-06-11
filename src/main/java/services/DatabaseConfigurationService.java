@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
 
 import config.DatabaseConfiguration;
-import db.MysqlConnection;
+import db.SQLConnectionManagerFactory;
 import dto.DatabaseConfigurationDto;
 import dto.ResponseDto;
 
@@ -37,7 +37,7 @@ public class DatabaseConfigurationService {
 	
 	
 	@POST
-    @Path("update")
+    @Path("test")
     @Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
     public ResponseDto updateConfiguration(JsonNode node) {
@@ -60,15 +60,12 @@ public class DatabaseConfigurationService {
 		}
 		
 		try {
-			MysqlConnection.testConnection(host, port, base, user, pass);
+			SQLConnectionManagerFactory.create().testConnection(host, port, base, user, pass);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return new ResponseDto(1, e.getMessage());
 		}
 		
 		return new ResponseDto(0, "Connected to database");
-			
-    	
     }
 	
 	

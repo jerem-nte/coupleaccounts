@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import core.Currency;
 import core.Expense;
 import core.User;
-import db.MysqlConnection;
+import db.SQLConnectionManagerFactory;
 
 public class ExpenseDao {
 	
@@ -33,7 +33,7 @@ public class ExpenseDao {
 		if(page > 0)
 			sqlSb.append(" LIMIT ").append(PAGE_SIZE).append(" OFFSET ").append((page-1)*PAGE_SIZE);
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -67,7 +67,7 @@ public class ExpenseDao {
 		sqlSb.append(" FROM transactions trs");
 		sqlSb.append(" WHERE trs.archived=").append(archived);
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -96,7 +96,7 @@ public class ExpenseDao {
 		sql = String.format(sql, userId, label, amount, scope, currencyId);
 		logger.info("Add = " + sql);
 
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		
 		try {
 			c.createStatement().executeUpdate(sql);
@@ -117,7 +117,7 @@ public class ExpenseDao {
 		sql = String.format(sql, id);
 		logger.info("Delete = " + sql);
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		
 		try {
 			c.createStatement().executeUpdate(sql);
@@ -139,7 +139,7 @@ public class ExpenseDao {
 		sql = String.format(sql, id);
 		logger.info("Archive = " + sql);
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		
 		try {
 			c.createStatement().executeUpdate(sql);
@@ -167,7 +167,7 @@ public class ExpenseDao {
 		String sql = "SELECT COALESCE(sum(amount), 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='1' AND archived=false AND user_id=" + u.getId() + " GROUP BY currency_id";
 		String sql_shared = "SELECT COALESCE(sum(amount)/2, 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='0' AND archived=false AND user_id=" + u.getId() + " GROUP BY currency_id";
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		ResultSet r;
 		
 		try {

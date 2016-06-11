@@ -11,19 +11,19 @@ import config.DatabaseConfiguration;
 
 
 
-public class MysqlConnection {
+public class MysqlConnection implements ISQLConnectionManager {
 	
 	private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
-	private static String host;
-	private static String port;
-	private static String base;
-	private static String user;
-	private static String pass;
+	private String host;
+	private String port;
+	private String base;
+	private String user;
+	private String pass;
+	private Connection dbConnection;
 	
 	private static Logger logger = Logger.getLogger(MysqlConnection.class);
 	
-	public static Connection getConnection() {
-		
+	public MysqlConnection() {
 		host = DatabaseConfiguration.getInstance().getProperty("host");
 		port = DatabaseConfiguration.getInstance().getProperty("port");
 		base = DatabaseConfiguration.getInstance().getProperty("base");
@@ -32,29 +32,24 @@ public class MysqlConnection {
 		
 		String url = "jdbc:mysql://" + host + ":" + port + "/" + base;
 		
-		Connection dbConnection = null;
-
 		try {
 			Class.forName(DB_DRIVER);
 		} catch (ClassNotFoundException e) {
 			logger.error("Cannot find database driver", e);
 		}
-
+		
 		try {
-
 			dbConnection = DriverManager.getConnection(url, user, pass);
-			return dbConnection;
-
 		} catch (SQLException e) {
 			logger.error("Cannot connect to database, with url = " + url, e);
 		}
-
+	}
+	
+	public Connection getConnection() {
 		return dbConnection;
 	}
 	
-	public static void testConnection(String host, String port, String base, String user, String pass) throws Exception {
-		
-		String url = "jdbc:mysql://" + host + ":" + port + "/" + base;
+	public void testConnection(String host, String port, String base, String user, String pass) throws Exception {
 		
 		try {
 			Class.forName(DB_DRIVER);
@@ -62,6 +57,8 @@ public class MysqlConnection {
 			logger.error("Cannot find database driver", e);
 			throw new Exception("Cannot test connection as no database driver is defined");
 		}
+		
+		String url = "jdbc:mysql://" + host + ":" + port + "/" + base;
 		
 		try {
 			DriverManager.getConnection(url, user, pass);

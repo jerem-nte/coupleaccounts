@@ -9,7 +9,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import core.Currency;
-import db.MysqlConnection;
+import db.SQLConnectionManagerFactory;
 
 public class CurrencyDao {
 
@@ -21,7 +21,7 @@ public class CurrencyDao {
 
 		String sql = "SELECT * FROM currency";
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -49,7 +49,7 @@ public class CurrencyDao {
 		
 		String sql = "SELECT * FROM currency WHERE id="+id;
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		ResultSet r;
 		
 		try {

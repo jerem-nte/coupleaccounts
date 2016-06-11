@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import core.User;
-import db.MysqlConnection;
+import db.SQLConnectionManagerFactory;
 
 public class UserDao {
 	
@@ -22,7 +22,7 @@ public class UserDao {
 
 		String sql = "SELECT * FROM users";
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -53,7 +53,7 @@ public class UserDao {
 		
 		String sql = "SELECT * FROM users WHERE id=" + userId;
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -78,7 +78,7 @@ public class UserDao {
 	
 	public static void update(User user) throws Exception {
 		
-		Connection c = MysqlConnection.getConnection();
+		Connection c = SQLConnectionManagerFactory.create().getConnection();
 		PreparedStatement prep;
 		
 		try {
