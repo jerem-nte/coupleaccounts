@@ -57,8 +57,7 @@ public class RestServer {
             jettyServer.start();
             jettyServer.join();
         } catch (Exception e) {
-            System.out.println("Could not start server");
-            e.printStackTrace();
+            logger.error("Could not start server", e);
         } finally {
             jettyServer.destroy();
         }
