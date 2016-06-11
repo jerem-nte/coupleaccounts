@@ -1,25 +1,24 @@
-coupleAccountsControllers.controller('DatabaseCtrl', ['$scope', '$http', function ($scope, $http) {
+coupleAccountsControllers.controller('DatabaseCtrl', ['$scope', '$http', 'DatabaseService', function ($scope, $http, DatabaseService) {
 	
 	$scope.message = {};
 	$scope.configuration = {};
 	
 	
-	
 	$scope.load = function() {
-		console.log("Load database configuration");
-		$http.get("/database/config").success(function(response) {$scope.configuration = response;});
+		DatabaseService.getConfiguration().then(function(data) {
+			$scope.configuration = data;
+		}).catch(function(data) {
+			$scope.message = data;
+		});
 	};
 	
 	$scope.testConnection = function() {
 		
-		$http.post('/database/update', {configuration:$scope.configuration}).
-			success(function(data, status, headers, config) {
-				$scope.message = data;
-	    	}).
-	    	error(function(data, status, headers, config) {
-	    		$scope.message = data;
-	    	}
-	    );
+		DatabaseService.testConfiguration($scope.configuration).then(function(data) {
+			$scope.message = data;
+		}).catch(function(data) {
+			$scope.message = data;
+		})
 	}
 	
 	$scope.load();

@@ -1,4 +1,4 @@
-coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', function ($scope, $http) {
+coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', 'ExpenseService', function ($scope, $http, ExpenseService) {
 
 	$scope.page = 1;
 	$scope.pageMax = 1;
@@ -22,13 +22,6 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', functio
 		
     };    
     
-    $scope.getPageMax = function() {		
-		$http.get("/expense/list/archived/pagemax").
-		success(function(response) {
-			$scope.pagemax = response;
-		});
-  	};
-	
 	$scope.selectAllTransactions = function () {
         // Loop through all the entities and set their isChecked property
         for (var i = 0; i < $scope.transactions.length; i++) {
@@ -51,12 +44,12 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', functio
 	
 	
   	$scope.getTransactions = function() {	
-  		$scope.getPageMax();
-  		
-		$http.get("/expense/list/archived",{params:{page:$scope.page}}).
-		success(function(response) {
-			$scope.transactions = response;
-		});
+  		ExpenseService.getArchivedExpenses($scope.page).then(function(data) {
+  			$scope.transactions = data.expenses;
+			$scope.pageMax = data.pageMax;
+  		}).catch(function(data) {
+  			$scope.message = {status:1, content:"Cannot get archived expenses"};
+  		});
   	}
  
   	$scope.deleteSelectedTransaction = function(trs) {
@@ -71,15 +64,12 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', functio
 
 		console.log("deleteSelectedTransaction("+selectedIds+")");
 		
-		$http.post('/expense/delete', {ids:selectedIds}).
- 	   	success(function(data, status, headers, config) {
+		ExpenseService.deleteExpenses(selectedIds).then(function(data) {
  	   		$scope.message = data;
  	   		$scope.getTransactions();
-    	}).
-    	error(function(data, status, headers, config) {
+    	}).catch(function(data) {
     		$scope.message = data;
     	});
-		
 	}
 	
 	$scope.getTransactions();

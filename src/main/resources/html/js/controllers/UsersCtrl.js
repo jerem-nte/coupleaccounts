@@ -1,16 +1,14 @@
-coupleAccountsControllers.controller('EditUserCtrl', function ($scope, $http, $uibModalInstance, user) {
+coupleAccountsControllers.controller('EditUserCtrl', function ($scope, $http, $uibModalInstance, user, UserService) {
 
 	$scope.name = user.name;
 	$scope.id = user.id;
 	
 	$scope.ok = function () {
-		$http.get('/user/edit', {params:{id:$scope.id, name:$scope.name}}).
- 	   	success(function(data, status, headers, config) {
- 	   		$uibModalInstance.close(data);
-    	}).
-    	error(function(data, status, headers, config) {
-    		$uibModalInstance.close(data);
-    	});
+		UserService.editUser($scope.id, $scope.name).then(function(data) {
+			$uibModalInstance.close(data);
+		}).catch(function(data) {
+			$uibModalInstance.close(data);
+		});
 	};
 
 	$scope.cancel = function () {
@@ -20,16 +18,17 @@ coupleAccountsControllers.controller('EditUserCtrl', function ($scope, $http, $u
 
 
 
-coupleAccountsControllers.controller('UsersCtrl', ['$scope', '$http', '$uibModal', function ($scope, $http, $uibModal) {
+coupleAccountsControllers.controller('UsersCtrl', ['$scope', '$http', '$uibModal', 'UserService', function ($scope, $http, $uibModal, UserService) {
 	
 	$scope.message = {};
 	$scope.users = [];
 	 
 	$scope.loadUsers = function() {
-		$http.get("/user/list",{params:{page:$scope.page}}).
-			success(function(response) {
-				$scope.users = response;
-			});
+		UserService.getUsers().then(function(data) {
+			$scope.users = data;
+		}).catch(function(data) {
+			$scope.message = 'Error getting users';
+		});
 	}
 	
 	$scope.showEditUser = function(user) {

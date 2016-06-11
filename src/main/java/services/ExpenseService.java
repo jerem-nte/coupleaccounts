@@ -16,6 +16,7 @@ import core.Debt;
 import core.DebtEngine;
 import core.Expense;
 import dao.ExpenseDao;
+import dto.PaginatedExpenseList;
 import dto.ResponseDto;
 
 @Path("/expense")
@@ -34,7 +35,7 @@ public class ExpenseService {
 	@GET
     @Path("list/archived")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Expense> listArchived(@QueryParam("page") String pageParam) {
+    public PaginatedExpenseList listArchived(@QueryParam("page") String pageParam) {
 		
 		Integer page = null;
 		try {
@@ -44,18 +45,9 @@ public class ExpenseService {
 		}
 		
 		List<Expense> expenses = ExpenseDao.getExpenses(true, page);
-		
-		return expenses; 
-    }
-	
-	@GET
-    @Path("list/archived/pagemax")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Integer pageMaxArchived() {
-		
 		Integer pageMax = ExpenseDao.getPageMax(true);
 		
-		return pageMax; 
+		return new PaginatedExpenseList(pageMax, expenses);
     }
 	
     @POST

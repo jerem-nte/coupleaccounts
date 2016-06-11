@@ -1,4 +1,4 @@
-coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', '$uibModal', '$animate', function ($scope, $http, $q, $uibModal) {
+coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', '$uibModal', '$animate', 'ExpenseService', 'UserService', function ($scope, $http, $q, $uibModal, $animate, ExpenseService, UserService) {
 
 	$scope.loading = true;
 	$scope.scope = "0";
@@ -36,7 +36,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
     };
 	
 	$scope.initUserList = function() {	
-		var promise = $http.get("/user/listhtmlselect").success(function(response) {
+		var promise = UserService.getUserList().then(function(response) {
 			$scope.users = response;
 			$scope.user = response[0].value;
 		});
@@ -44,7 +44,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 	}
 	
 	$scope.initCurrencyList = function() {	
-		var promise = $http.get("/currency/listhtmlselect").success(function(response) {
+		var promise = ExpenseService.getCurrencyList().then(function(response) {
 			$scope.currencies = response;
 			$scope.currency = response[0].value;
 		});
@@ -52,7 +52,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 	}
   
   	$scope.getTransactions = function() {		
-  		var promise = $http.get("/expense/list/notarchived").success(function(response) {$scope.transactions = response;});
+  		var promise = ExpenseService.getExpenses().then(function(response) {$scope.transactions = response;});
   		return promise;
   	}
   	
@@ -62,8 +62,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		
 		if(isValid) {
 			
-			$http.post('/expense/add', {userId:$scope.user, label:$scope.label, amount:$scope.amount, scope:$scope.scope, currencyId:$scope.currency}).
-				success(function(data, status, headers, config) {
+			ExpenseService.addExpense($scope.user, $scope.label, $scope.amount, $scope.scope, $scope.currency).then(function(data) {
 					$scope.alerts.push(data);
 					$scope.getTransactions();
 					$scope.getUserDebt();
@@ -71,8 +70,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 					if(data.status == "0") {		   	
 						$scope.cleanForm();
 					}
-		    	}).
-		    	error(function(data, status, headers, config) {
+		    	}).catch(function(data) {
 		    		$scope.alerts.push(data);
 		    	}
 		    );
@@ -92,16 +90,13 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 
 		console.log("deleteSelectedTransaction("+selectedIds+")");
 		
-		$http.post('/expense/delete', {ids:selectedIds}).
- 	   	success(function(data, status, headers, config) {
- 	   		$scope.alerts.push(data);
-		   $scope.getTransactions();
-		   $scope.getUserDebt();
-    	}).
-    	error(function(data, status, headers, config) {
+		ExpenseService.deleteExpenses(selectedIds).then(function(data) {
+			$scope.alerts.push(data);
+			$scope.getTransactions();
+			$scope.getUserDebt();
+    	}).catch(function(data) {
     		$scope.alerts.push(data);
     	});
-		
 	}
 	
 	$scope.archiveSelectedTransaction = function(trs) {
@@ -116,13 +111,11 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 
 		console.log("archiveSelectedTransaction("+selectedIds+")");
 		
-		$http.post('/expense/archive', {ids:selectedIds}).
- 	   	success(function(data, status, headers, config) {
+		ExpenseService.archiveExpenses(selectedIds).then(function(data) {
  	   		$scope.alerts.push(data);
  	   		$scope.getTransactions();
  	   		$scope.getUserDebt();
-    	}).
-    	error(function(data, status, headers, config) {
+    	}).catch(function(data) {
     		$scope.alerts.push(data);
     	});
 		
@@ -131,11 +124,9 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 	
 	$scope.getUserDebt = function() {
 		
-		var promise = $http.post('/expense/debt').
-		success(function(data, status, headers, config) {
+		var promise = ExpenseService.getUserDebt().then(function(data) {
 			$scope.debts = data;
-		}).
-		error(function(data, status, headers, config) {
+		}).catch(function(data) {
 			$scope.alerts.push(data);
 		});
 		
@@ -192,20 +183,19 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 
 
 
-coupleAccountsControllers.controller('PayTheBillCtrl', function ($scope, $http, $uibModalInstance, debts) {
+coupleAccountsControllers.controller('PayTheBillCtrl', function ($scope, $http, $uibModalInstance, debts, ExpenseService) {
 
 	$scope.debts = debts;
 	
 	$scope.ok = function () {
 		$scope.debts.filter(function(debt){return debt.debt!=0;}).forEach(function(debt) {
-			$http.post('/expense/add', {userId:debt.debit.id, label:'Remboursement des dettes', amount: debt.debt, scope:1, currencyId:debt.currency.id}).
-				success(function(data, status, headers, config) {
-					$uibModalInstance.close(data);
-		    	}).
-		    	error(function(data, status, headers, config) {
-		    		$uibModalInstance.close(data);
-		    	}
-	    	);
+			
+			ExpenseService.addExpense(debt.debit.id, 'Remboursement des dettes', debt.debt, 1, debt.currency.id).then(function(data) {
+				$uibModalInstance.close(data);
+	    	}).catch(function(data) {
+	    		$uibModalInstance.close(data);
+	    	});
+			
 		});
 	};
 
