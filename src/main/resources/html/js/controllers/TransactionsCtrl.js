@@ -1,4 +1,4 @@
-coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', '$uibModal', '$animate', 'ExpenseService', 'UserService', function ($scope, $http, $q, $uibModal, $animate, ExpenseService, UserService) {
+coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', '$uibModal', '$animate', 'ExpenseService', 'UserService',  function ($scope, $http, $q, $uibModal, $animate, ExpenseService, UserService) {
 
 	$scope.loading = true;
 	$scope.scope = "0";
@@ -151,6 +151,9 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		
 		$q.all(promises).then(function() {
 			$scope.loading = false;
+		}).catch(function() {
+			$scope.loading = false;
+			$scope.alerts.push({status:1, content: "Error loading data, please contact your system administrator"});
 		});
 	}
 	

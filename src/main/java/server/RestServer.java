@@ -2,6 +2,10 @@ package server;
 
 import java.net.URL;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.jetty.server.Handler;
@@ -12,6 +16,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+
+import db.SQLConnectionManagerFactory;
 
 public class RestServer {
 	
@@ -25,12 +31,24 @@ public class RestServer {
     		logger.error("Cannot load log4j configuration file", e);
     	}
     	
+    	
+    	CommandLineParser parser = new DefaultParser();
+    	CommandLine cmd = parser.parse( new Options().addOption("m", false, "Activate memory database mode"), args);
+    	
+    	if(cmd.hasOption("m")) {
+    		logger.info("Using memory database mode");
+    		SQLConnectionManagerFactory.getInstance().activateMemoryMode();
+    		SQLConnectionManagerFactory.getInstance().create().importSQL(RestServer.class.getResourceAsStream("/config/coupleaccounts.sqlite"));
+    	} else {
+    		logger.info("Using normal database mode");
+    	}
+    	
     	logger.info("Starting couple account server");
     	
-    	 String  baseStr  = "/html";
-    	 URL     baseUrl  = RestServer.class.getResource( baseStr ); 
-    	 String  basePath = baseUrl.toExternalForm();
-    	 logger.info("Base path for static resources is " + basePath);
+    	String  baseStr  = "/html";
+    	URL     baseUrl  = RestServer.class.getResource( baseStr ); 
+    	String  basePath = baseUrl.toExternalForm();
+    	logger.info("Base path for static resources is " + basePath);
     	
     	ResourceHandler staticContext = new ResourceHandler();
         staticContext.setDirectoriesListed(false);

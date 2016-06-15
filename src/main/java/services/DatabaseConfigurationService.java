@@ -60,7 +60,7 @@ public class DatabaseConfigurationService {
 		}
 		
 		try {
-			SQLConnectionManagerFactory.create().testConnection(host, port, base, user, pass);
+			SQLConnectionManagerFactory.getInstance().create().testConnection(host, port, base, user, pass);
 		} catch (Exception e) {
 			return new ResponseDto(1, e.getMessage());
 		}

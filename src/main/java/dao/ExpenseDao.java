@@ -28,12 +28,12 @@ public class ExpenseDao {
 		StringBuilder sqlSb = new StringBuilder("SELECT trs.id as trsId, trs.label, trs.amount, trs.scope, trs.archived, usrs.id as userId, trs.currency_id, usrs.name, usrs.gender");
 		sqlSb.append(" FROM transactions trs");
 		sqlSb.append(" JOIN users usrs on trs.user_id = usrs.id ");
-		sqlSb.append(" WHERE trs.archived=").append(archived);
+		sqlSb.append(" WHERE trs.archived=").append(archived ? "1" : "0");
 		sqlSb.append(" ORDER BY trs.id DESC");
 		if(page > 0)
 			sqlSb.append(" LIMIT ").append(PAGE_SIZE).append(" OFFSET ").append((page-1)*PAGE_SIZE);
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -65,9 +65,9 @@ public class ExpenseDao {
 
 		StringBuilder sqlSb = new StringBuilder("SELECT count(trs.id) as nbTrs");
 		sqlSb.append(" FROM transactions trs");
-		sqlSb.append(" WHERE trs.archived=").append(archived);
+		sqlSb.append(" WHERE trs.archived=").append(archived ? "1" : "0");
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -92,11 +92,11 @@ public class ExpenseDao {
 	
 	public static void addExpense(String userId, String label, Double amount, String scope, String currencyId) throws Exception {
 		
-		String sql = "INSERT INTO transactions (user_id, label, amount, scope, archived, currency_id) values (%s, '%s', %s, '%s', false, '%s')";
+		String sql = "INSERT INTO transactions (user_id, label, amount, scope, archived, currency_id) values (%s, '%s', %s, '%s', 0, '%s')";
 		sql = String.format(sql, userId, label, amount, scope, currencyId);
 		logger.info("Add = " + sql);
 
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		
 		try {
 			c.createStatement().executeUpdate(sql);
@@ -117,7 +117,7 @@ public class ExpenseDao {
 		sql = String.format(sql, id);
 		logger.info("Delete = " + sql);
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		
 		try {
 			c.createStatement().executeUpdate(sql);
@@ -135,11 +135,11 @@ public class ExpenseDao {
 	 
 	public static void archiveExpense(String id) throws Exception {
 		
-		String sql = "UPDATE transactions SET archived=true WHERE id = %s";
+		String sql = "UPDATE transactions SET archived=1 WHERE id = %s";
 		sql = String.format(sql, id);
 		logger.info("Archive = " + sql);
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		
 		try {
 			c.createStatement().executeUpdate(sql);
@@ -164,10 +164,10 @@ public class ExpenseDao {
 			expenses.put(curr.getId(), new BigDecimal(0));
 		}
 		
-		String sql = "SELECT COALESCE(sum(amount), 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='1' AND archived=false AND user_id=" + u.getId() + " GROUP BY currency_id";
-		String sql_shared = "SELECT COALESCE(sum(amount)/2, 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='0' AND archived=false AND user_id=" + u.getId() + " GROUP BY currency_id";
+		String sql = "SELECT COALESCE(sum(amount), 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='1' AND archived=0 AND user_id=" + u.getId() + " GROUP BY currency_id";
+		String sql_shared = "SELECT COALESCE(sum(amount)/2, 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='0' AND archived=0 AND user_id=" + u.getId() + " GROUP BY currency_id";
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		ResultSet r;
 		
 		try {

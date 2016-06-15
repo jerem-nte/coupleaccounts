@@ -1,6 +1,7 @@
 package db;
 
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -67,6 +68,10 @@ public class MysqlConnection implements ISQLConnectionManager {
 			throw new Exception("Cannot connect to database : " + e.getMessage());
 		}
 		
+	}
+
+	public void importSQL(InputStream in) throws SQLException {
+		logger.error("SQL import not implemented.");
 	}
 
 }

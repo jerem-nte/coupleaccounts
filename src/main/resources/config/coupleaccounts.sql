@@ -6,10 +6,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
-CREATE DATABASE IF NOT EXISTS `coupleaccounts` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `coupleaccounts`;
 
-DROP TABLE IF EXISTS `currency`;
 CREATE TABLE IF NOT EXISTS `currency` (
 `id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
@@ -17,7 +14,6 @@ CREATE TABLE IF NOT EXISTS `currency` (
   `icon` varchar(255) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `transactions`;
 CREATE TABLE IF NOT EXISTS `transactions` (
 `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -25,10 +21,9 @@ CREATE TABLE IF NOT EXISTS `transactions` (
   `label` varchar(255) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `scope` varchar(50) NOT NULL,
-  `archived` int(1) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=353 DEFAULT CHARSET=latin1;
+  `archived` tinyint(1) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=373 DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
 `id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
@@ -49,7 +44,7 @@ ALTER TABLE `users`
 ALTER TABLE `currency`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 ALTER TABLE `transactions`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=353;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=373;
 ALTER TABLE `users`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

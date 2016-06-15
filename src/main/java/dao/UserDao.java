@@ -22,7 +22,7 @@ public class UserDao {
 
 		String sql = "SELECT * FROM users";
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -53,7 +53,7 @@ public class UserDao {
 		
 		String sql = "SELECT * FROM users WHERE id=" + userId;
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -78,7 +78,7 @@ public class UserDao {
 	
 	public static void update(User user) throws Exception {
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		PreparedStatement prep;
 		
 		try {

@@ -21,7 +21,7 @@ public class CurrencyDao {
 
 		String sql = "SELECT * FROM currency";
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		ResultSet r;
 		
 		try {
@@ -49,7 +49,7 @@ public class CurrencyDao {
 		
 		String sql = "SELECT * FROM currency WHERE id="+id;
 		
-		Connection c = SQLConnectionManagerFactory.create().getConnection();
+		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
 		ResultSet r;
 		
 		try {
