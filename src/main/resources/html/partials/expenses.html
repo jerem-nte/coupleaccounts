@@ -68,7 +68,9 @@
 		  </ul>
 		</div>
 		
-		
+		<div class="pull-right">
+			<label>Search: <input ng-model="search.label"></label> <br>
+		</div>
 		
 		<table class="table table-striped">
 			<thead>
@@ -81,7 +83,7 @@
 				</tr>
 			</thead>
 			
-			<tr ng-repeat="transaction in transactions">
+			<tr ng-repeat="transaction in transactions | filter:search:strict">
 				<td class="action"><input type="checkbox" ng-model="transaction.isChecked" ng-change="selectTransaction()"></td>
 				<td class="name"><img ng-src="img\{{transaction.user.gender}}.png"> &nbsp; {{transaction.user.name}}</td>
 				<td class="trslabel">{{transaction.label}}</td>
