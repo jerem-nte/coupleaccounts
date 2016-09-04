@@ -5,6 +5,7 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', 'Expens
 	$scope.message = {};
 	$scope.transactions = [];
 	$scope.allTransactionSelected = false;
+	$scope.loading = true;
 	
 	$scope.nextPage = function () {
 		if($scope.page==$scope.pagemax)
@@ -44,10 +45,14 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', 'Expens
 	
 	
   	$scope.getTransactions = function() {	
+  		$scope.loading = true;
+  		
   		ExpenseService.getArchivedExpenses($scope.page).then(function(data) {
   			$scope.transactions = data.expenses;
 			$scope.pageMax = data.pageMax;
+			$scope.loading = false;
   		}).catch(function(data) {
+  			$scope.loading = false;
   			$scope.message = {status:1, content:"Cannot get archived expenses"};
   		});
   	}

@@ -18,6 +18,7 @@
 	    <li><a ng-click="deleteSelectedTransaction(transactions)">Delete selected</a></li>
 	  </ul>
 	</div>
+
 	
 	<table class="table table-striped">
 		<thead>
@@ -30,7 +31,11 @@
 			</tr>
 		</thead>
 		
-		<tr ng-repeat="transaction in transactions">
+		<div ng-show="loading">
+			<div class="loader"> Loading...</div>
+		</div>
+
+		<tr ng-repeat="transaction in transactions" ng-show="!loading">
 			<td class="action"><input type="checkbox" ng-model="transaction.isChecked" ng-change="selectTransaction()"></td>
 			<td class="name"><img ng-src="img\{{transaction.user.gender}}.png"> &nbsp; {{transaction.user.name}}</td>
 			<td class="trslabel">{{transaction.label}}</td>
@@ -43,7 +48,7 @@
 	</table>
 	
 	
-	<nav>
+	<nav ng-show="!loading">
 	  <ul class="pager">
 	    <li ng-class="{' disabled' :page == 1}"><a ng-click="previousPage()">Previous</a></li>
 	    {{page}}/{{pageMax}}
