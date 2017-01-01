@@ -15,7 +15,7 @@
 	    Action <span class="caret"></span>
 	  </button>
 	  <ul class="dropdown-menu">
-	    <li><a ng-click="deleteSelectedTransaction(transactions)">Delete selected</a></li>
+	    <li><a ng-click="deleteSelectedTransaction(transactions)">Supprimer la sélection</a></li>
 	  </ul>
 	</div>
 
@@ -50,9 +50,9 @@
 	
 	<nav ng-show="!loading">
 	  <ul class="pager">
-	    <li ng-class="{' disabled' :page == 1}"><a ng-click="previousPage()">Previous</a></li>
+	    <li ng-class="{' disabled' :page == 1}"><a ng-click="previousPage()">Précédent</a></li>
 	    {{page}}/{{pageMax}}
-	    <li ng-class="{' disabled' :page == pagemax}"><a ng-click="nextPage()">Next</a></li>
+	    <li ng-class="{' disabled' :page == pagemax}"><a ng-click="nextPage()">Suivant</a></li>
 	  </ul>
 	</nav>
 
