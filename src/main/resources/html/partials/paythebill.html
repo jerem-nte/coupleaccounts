@@ -3,13 +3,9 @@
 </div>
 
 <div class="modal-body">
-	<div ng-repeat="userDebt in debts">
-		<ul>
-			<div ng-show="userDebt.debt != 0" ng-class="{' pink' : userDebt.debit.gender == 'f', ' blue' : userDebt.debit.gender == 'm'}">
-				<li>{{userDebt.debit.name}} déclare avoir remboursé <b>{{userDebt.debt}} {{userDebt.currency.shortname}}</b> à {{userDebt.credit.name}}</li>
+			<div ng-show="debt.debt != 0" ng-class="{' pink' : debt.debit.gender == 'f', ' blue' : debt.debit.gender == 'm'}">
+				<li>{{debt.debit.name}} déclare avoir remboursé <b>{{debt.debt}} {{debt.currency.shortname}}</b> à {{debt.credit.name}}</li>
 			</div>
-		</ul>	
-	</div>
 </div>
 
 <div class="modal-footer">

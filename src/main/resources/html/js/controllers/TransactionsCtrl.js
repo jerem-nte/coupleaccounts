@@ -157,7 +157,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		});
 	}
 	
-	$scope.showPayTheBill = function() {
+	$scope.showPayTheBill = function(userDebt) {
 		
 		var modalInstance = $uibModal.open({
 			animation: true,
@@ -165,8 +165,8 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 			controller: 'PayTheBillCtrl',
 			size: 'lg',
 			resolve: {
-				debts: function () {
-					return $scope.debts;
+				debt: function () {
+					return userDebt;
 				}
 			}
 		});
@@ -186,20 +186,18 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 
 
 
-coupleAccountsControllers.controller('PayTheBillCtrl', function ($scope, $http, $uibModalInstance, debts, ExpenseService) {
+coupleAccountsControllers.controller('PayTheBillCtrl', function ($scope, $http, $uibModalInstance, debt, ExpenseService) {
 
-	$scope.debts = debts;
+	$scope.debt = debt;
 	
 	$scope.ok = function () {
-		$scope.debts.filter(function(debt){return debt.debt!=0;}).forEach(function(debt) {
-			
+		if(debt.debt!=0) {
 			ExpenseService.addExpense(debt.debit.id, 'Remboursement des dettes', debt.debt, 1, debt.currency.id).then(function(data) {
 				$uibModalInstance.close(data);
 	    	}).catch(function(data) {
 	    		$uibModalInstance.close(data);
 	    	});
-			
-		});
+		}
 	};
 
 	$scope.cancel = function () {
