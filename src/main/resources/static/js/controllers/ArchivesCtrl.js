@@ -1,8 +1,7 @@
-coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', 'ExpenseService', function ($scope, $http, ExpenseService) {
+coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', 'ExpenseService', 'Notification', function ($scope, $http, ExpenseService, Notification) {
 
 	$scope.page = 1;
 	$scope.pageMax = 1;
-	$scope.message = {};
 	$scope.transactions = [];
 	$scope.allTransactionSelected = false;
 	$scope.loading = true;
@@ -53,7 +52,7 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', 'Expens
 			$scope.loading = false;
   		}).catch(function(data) {
   			$scope.loading = false;
-  			$scope.message = {status:1, content:"Cannot get archived expenses"};
+  			Notification.error({message: "Cannot get archived expenses", positionY: 'bottom', positionX: 'center'});
   		});
   	}
  
@@ -70,10 +69,10 @@ coupleAccountsControllers.controller('ArchivesCtrl', ['$scope', '$http', 'Expens
 		console.log("deleteSelectedTransaction("+selectedIds+")");
 		
 		ExpenseService.deleteExpenses(selectedIds).then(function(data) {
- 	   		$scope.message = data;
+			Notification.success({message: data.content, positionY: 'bottom', positionX: 'center'});
  	   		$scope.getTransactions();
     	}).catch(function(data) {
-    		$scope.message = data;
+    		Notification.error({message: data.content, positionY: 'bottom', positionX: 'center'});
     	});
 	}
 	

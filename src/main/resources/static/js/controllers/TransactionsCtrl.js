@@ -1,4 +1,4 @@
-coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', '$uibModal', '$animate', 'ExpenseService', 'UserService',  function ($scope, $http, $q, $uibModal, $animate, ExpenseService, UserService) {
+coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q', '$uibModal', '$animate', 'ExpenseService', 'UserService', 'Notification', function ($scope, $http, $q, $uibModal, $animate, ExpenseService, UserService, Notification) {
 
 	$scope.loading = true;
 	$scope.scope = "0";
@@ -8,12 +8,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 	$scope.debts = [];
 	$scope.label = "";
 	$scope.allTransactionSelected = false;
-	$scope.alerts = [];
-	
-	
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
+
 	
 	$scope.selectAllTransactions = function () {
         // Loop through all the entities and set their isChecked property
@@ -63,7 +58,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		if(isValid) {
 			
 			ExpenseService.addExpense($scope.user, $scope.label, $scope.amount, $scope.scope, $scope.currency).then(function(data) {
-					$scope.alerts.push(data);
+					Notification({message: data.content, positionY: 'bottom', positionX: 'center'}, data.status == 0 ? 'success' : 'warning');
 					$scope.getTransactions();
 					$scope.getUserDebt();
 				   
@@ -71,7 +66,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 						$scope.cleanForm();
 					}
 		    	}).catch(function(data) {
-		    		$scope.alerts.push(data);
+		    		Notification.error({message: data.content, positionY: 'bottom', positionX: 'center'});
 		    	}
 		    );
 		}
@@ -91,11 +86,11 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		console.log("deleteSelectedTransaction("+selectedIds+")");
 		
 		ExpenseService.deleteExpenses(selectedIds).then(function(data) {
-			$scope.alerts.push(data);
+			Notification({message: data.content, positionY: 'bottom', positionX: 'center'}, data.status == 0 ? 'success' : 'warning');
 			$scope.getTransactions();
 			$scope.getUserDebt();
     	}).catch(function(data) {
-    		$scope.alerts.push(data);
+    		Notification.error({message: data.content, positionY: 'bottom', positionX: 'center'});
     	});
 	}
 	
@@ -112,11 +107,11 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		console.log("archiveSelectedTransaction("+selectedIds+")");
 		
 		ExpenseService.archiveExpenses(selectedIds).then(function(data) {
- 	   		$scope.alerts.push(data);
+			Notification({message: data.content, positionY: 'bottom', positionX: 'center'}, data.status == 0 ? 'success' : 'warning');
  	   		$scope.getTransactions();
  	   		$scope.getUserDebt();
     	}).catch(function(data) {
-    		$scope.alerts.push(data);
+    		Notification.error({message: data.content, positionY: 'bottom', positionX: 'center'});
     	});
 		
 	}
@@ -127,7 +122,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		var promise = ExpenseService.getUserDebt().then(function(data) {
 			$scope.debts = data;
 		}).catch(function(data) {
-			$scope.alerts.push(data);
+			Notification.error({message: data.content, positionY: 'bottom', positionX: 'center'});
 		});
 		
 		return promise;
@@ -153,7 +148,7 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 			$scope.loading = false;
 		}).catch(function() {
 			$scope.loading = false;
-			$scope.alerts.push({status:1, content: "Error loading data, please contact your system administrator"});
+			Notification.error({message: "Error loading data, please contact your system administrator", positionY: 'bottom', positionX: 'center'});
 		});
 	}
 	
