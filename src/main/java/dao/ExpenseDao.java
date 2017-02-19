@@ -9,19 +9,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import core.Currency;
 import core.Expense;
 import core.User;
-import db.SQLConnectionManagerFactory;
 
+@Repository
 public class ExpenseDao {
 	
 	private static final int PAGE_SIZE = 15;
 	private static Logger logger = Logger.getLogger(ExpenseDao.class);
+	
+	@Autowired
+	private DataSource dataSource;
+	
+	@Autowired
+	CurrencyDao currencyDao;
 
-	public static List<Expense> getExpenses(boolean archived, int page) {
+	public List<Expense> getExpenses(boolean archived, int page) throws SQLException {
 		
 		List<Expense> expenseList = new ArrayList<Expense>();
 
@@ -33,14 +43,14 @@ public class ExpenseDao {
 		if(page > 0)
 			sqlSb.append(" LIMIT ").append(PAGE_SIZE).append(" OFFSET ").append((page-1)*PAGE_SIZE);
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		ResultSet r;
 		
 		try {
 			r = c.createStatement().executeQuery(sqlSb.toString());
 		
 			while (r.next()) {
-				Expense e = new Expense(r.getString("trsId"), r.getString("label"), r.getDouble("amount"), r.getString("scope"), r.getBoolean("archived"), new User(r.getString("userId"), r.getString("name"), r.getString("gender")), CurrencyDao.getCurrency(r.getString("currency_id")));
+				Expense e = new Expense(r.getString("trsId"), r.getString("label"), r.getDouble("amount"), r.getString("scope"), r.getBoolean("archived"), new User(r.getString("userId"), r.getString("name"), r.getString("gender")), currencyDao.getCurrency(r.getString("currency_id")));
 				expenseList.add(e);
 			}
 			
@@ -59,7 +69,7 @@ public class ExpenseDao {
 	}
 	
 	
-	public static Integer getPageMax(boolean archived) {
+	public Integer getPageMax(boolean archived) throws SQLException {
 		
 		Integer nbTrs = 1;
 
@@ -67,7 +77,7 @@ public class ExpenseDao {
 		sqlSb.append(" FROM transactions trs");
 		sqlSb.append(" WHERE trs.archived=").append(archived ? "1" : "0");
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		ResultSet r;
 		
 		try {
@@ -90,13 +100,13 @@ public class ExpenseDao {
 	}
 	
 	
-	public static void addExpense(String userId, String label, Double amount, String scope, String currencyId) throws Exception {
+	public void addExpense(String userId, String label, Double amount, String scope, String currencyId) throws Exception {
 		
 		String sql = "INSERT INTO transactions (user_id, label, amount, scope, archived, currency_id) values (%s, '%s', %s, '%s', 0, '%s')";
 		sql = String.format(sql, userId, label, amount, scope, currencyId);
 		logger.info("Add = " + sql);
 
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		
 		try {
 			c.createStatement().executeUpdate(sql);
@@ -111,13 +121,13 @@ public class ExpenseDao {
 		}
 	}
 	
-	public static void deleteExpense(String id) throws Exception {
+	public void deleteExpense(String id) throws Exception {
 		
 		String sql = "DELETE FROM transactions WHERE id = %s";
 		sql = String.format(sql, id);
 		logger.info("Delete = " + sql);
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		
 		try {
 			c.createStatement().executeUpdate(sql);
@@ -133,13 +143,13 @@ public class ExpenseDao {
 	}
 	
 	 
-	public static void archiveExpense(String id) throws Exception {
+	public void archiveExpense(String id) throws Exception {
 		
 		String sql = "UPDATE transactions SET archived=1 WHERE id = %s";
 		sql = String.format(sql, id);
 		logger.info("Archive = " + sql);
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		
 		try {
 			c.createStatement().executeUpdate(sql);
@@ -155,19 +165,19 @@ public class ExpenseDao {
 	}
 
 	
-	public static Map<String, BigDecimal> geUserExpenses(User u) {
+	public Map<String, BigDecimal> geUserExpenses(User u) throws SQLException {
 		
 		Map<String, BigDecimal> expenses = new HashMap<String, BigDecimal>();
 		
 		// Init a value for each currency. TODO: handle that in SQL request
-		for (Currency curr : CurrencyDao.getCurrencies()) {
+		for (Currency curr : currencyDao.getCurrencies()) {
 			expenses.put(curr.getId(), new BigDecimal(0));
 		}
 		
 		String sql = "SELECT COALESCE(sum(amount), 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='1' AND archived=0 AND user_id=" + u.getId() + " GROUP BY currency_id";
 		String sql_shared = "SELECT COALESCE(sum(amount)/2, 0) AS sum_amount, currency_id FROM transactions trs WHERE scope='0' AND archived=0 AND user_id=" + u.getId() + " GROUP BY currency_id";
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		ResultSet r;
 		
 		try {

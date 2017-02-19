@@ -3,6 +3,7 @@ package com.rest.test.coupleaccounts;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import core.Debt;
 import core.DebtEngine;
@@ -25,33 +27,39 @@ import dao.UserDao;
 @PrepareForTest({ExpenseDao.class, UserDao.class})
 public class TestDebtEngine {
 	
+	@Autowired
+	ExpenseDao expenseDao;
+	
+	@Autowired
+	UserDao userDao;
+	
 	private User u1;
 	private User u2;
 	private Map<String, BigDecimal> firstUserExpenses = new HashMap<String, BigDecimal>();
 	private Map<String, BigDecimal> secondUserExpenses = new HashMap<String, BigDecimal>();
 	
 	@Before
-	public void initUsers() {
+	public void initUsers() throws SQLException {
 		
 		u1 = new User("1", "Jeremy", "f");
 		u2 = new User("2", "Chloe", "f");
 		
 		PowerMockito.mockStatic(UserDao.class);
-		Mockito.when(UserDao.getFirstUser()).thenReturn(u1);
-		Mockito.when(UserDao.getSecondUser()).thenReturn(u2);
+		Mockito.when(userDao.getFirstUser()).thenReturn(u1);
+		Mockito.when(userDao.getSecondUser()).thenReturn(u2);
 		
 		firstUserExpenses.clear();
 		secondUserExpenses.clear();
 		
 		PowerMockito.mockStatic(ExpenseDao.class);
-		Mockito.when(ExpenseDao.geUserExpenses(u1)).thenReturn(firstUserExpenses);
-		Mockito.when(ExpenseDao.geUserExpenses(u2)).thenReturn(secondUserExpenses);
+		Mockito.when(expenseDao.geUserExpenses(u1)).thenReturn(firstUserExpenses);
+		Mockito.when(expenseDao.geUserExpenses(u2)).thenReturn(secondUserExpenses);
 		
 	}
 	
 	
 	@Test
-	public void computeUser1() {
+	public void computeUser1() throws SQLException {
 		
 		DebtEngine engine = new DebtEngine();
 		List<Debt> debts;
@@ -65,7 +73,7 @@ public class TestDebtEngine {
 	}
 	
 	@Test
-	public void computeUser2() {
+	public void computeUser2() throws SQLException {
 		
 		DebtEngine engine = new DebtEngine();
 		List<Debt> debts;
@@ -79,7 +87,7 @@ public class TestDebtEngine {
 	}
 	
 	@Test
-	public void computeEmptyWithExpense() {
+	public void computeEmptyWithExpense() throws SQLException {
 		
 		DebtEngine engine = new DebtEngine();
 		List<Debt> debts;
@@ -92,7 +100,7 @@ public class TestDebtEngine {
 	}
 	
 	@Test
-	public void computeEmptyWithoutExpense() {
+	public void computeEmptyWithoutExpense() throws SQLException {
 		
 		DebtEngine engine = new DebtEngine();
 		List<Debt> debts;
@@ -105,7 +113,7 @@ public class TestDebtEngine {
 	}
 	
 	@Test
-	public void compute1ct() {
+	public void compute1ct() throws SQLException {
 		
 		DebtEngine engine = new DebtEngine();
 		List<Debt> debts;

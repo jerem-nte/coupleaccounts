@@ -1,16 +1,15 @@
 package services;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
-import org.codehaus.jackson.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import core.Debt;
 import core.DebtEngine;
@@ -19,23 +18,25 @@ import dao.ExpenseDao;
 import dto.PaginatedExpenseList;
 import dto.ResponseDto;
 
-@Path("/expense")
+@RestController
+@RequestMapping("/expense")
 public class ExpenseService {
 	
+	@Autowired
+	private ExpenseDao expenseDao;
 	
-	@GET
-    @Path("list/notarchived")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Expense> listAll() {
+	@Autowired
+	private DebtEngine de;
+	
+	@RequestMapping("list/notarchived")
+    public List<Expense> listAll() throws SQLException {
     	
-		List<Expense> expenses = ExpenseDao.getExpenses(false, -1);
+		List<Expense> expenses = expenseDao.getExpenses(false, -1);
 		return expenses; 
     }
 	
-	@GET
-    @Path("list/archived")
-    @Produces(MediaType.APPLICATION_JSON)
-    public PaginatedExpenseList listArchived(@QueryParam("page") String pageParam) {
+	@RequestMapping("list/archived")
+    public PaginatedExpenseList listArchived(@RequestParam("page") String pageParam) throws SQLException {
 		
 		Integer page = null;
 		try {
@@ -44,24 +45,21 @@ public class ExpenseService {
 			page = new Integer(-1);
 		}
 		
-		List<Expense> expenses = ExpenseDao.getExpenses(true, page);
-		Integer pageMax = ExpenseDao.getPageMax(true);
+		List<Expense> expenses = expenseDao.getExpenses(true, page);
+		Integer pageMax = expenseDao.getPageMax(true);
 		
 		return new PaginatedExpenseList(pageMax, expenses);
     }
 	
-    @POST
-    @Path("delete")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ResponseDto delete(JsonNode json) {
+    @RequestMapping(value="delete", method = RequestMethod.POST)
+    public ResponseDto delete(@RequestBody List<String> ids) {
     	
-    	if(json.get("ids").size() == 0)
+    	if(ids.size() == 0)
     		return new ResponseDto(1, "Nothing to delete");
     	
     	try {
-    		for (final JsonNode id : json.get("ids")) {
-    			ExpenseDao.deleteExpense(id.asText());
+    		for (final String id : ids) {
+    			expenseDao.deleteExpense(id);
     	    }
 		} catch (Exception e) {
 			return new ResponseDto(1, "Cannot delete expense : " + e.getMessage());
@@ -70,18 +68,15 @@ public class ExpenseService {
     	return new ResponseDto(0, "Expense successfully deleted");
     }
     
-    @POST
-    @Path("archive")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ResponseDto archive(JsonNode json) {
+    @RequestMapping(value="archive", method = RequestMethod.POST)
+    public ResponseDto archive(@RequestBody List<String> ids) {
     	
-    	if(json.get("ids").size() == 0)
+    	if(ids.size() == 0)
     		return new ResponseDto(1, "Nothing to archive");
     	
     	try {
-    		for (final JsonNode id : json.get("ids")) {
-    			ExpenseDao.archiveExpense(id.asText());
+    		for (final String id : ids) {
+    			expenseDao.archiveExpense(id);
     	    }
 		} catch (Exception e) {
 			return new ResponseDto(1, "Cannot archive expense : " + e.getMessage());
@@ -91,16 +86,13 @@ public class ExpenseService {
     }
     
     
-    @POST
-    @Path("add")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ResponseDto add(JsonNode json) {
+    @RequestMapping(value="add", method = RequestMethod.POST)
+    public ResponseDto add(@RequestBody Map<String, Object> json) {
     	
     	Double amountDouble;
     	
     	try {
-    		amountDouble = Double.parseDouble(json.get("amount").asText());
+    		amountDouble = Double.parseDouble((String) json.get("amount"));
     	} catch(Exception e) {
     		return new ResponseDto(1, "Please enter a valid amount");
     	}
@@ -110,7 +102,7 @@ public class ExpenseService {
     	}
     	
     	try {
-			ExpenseDao.addExpense(json.get("userId").asText(), json.get("label").asText(), amountDouble, json.get("scope").asText(), json.get("currencyId").asText());
+    		expenseDao.addExpense((String)json.get("userId"), (String)json.get("label"), amountDouble, (String)json.get("scope"), (String)json.get("currencyId"));
 		} catch (Exception e) {
 			return new ResponseDto(1, "Cannot add expense : " + e.getMessage());
 		}
@@ -119,17 +111,10 @@ public class ExpenseService {
     	
     }
     
-    @POST
-    @Path("debt")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Debt> getUserDebt() {
+    @RequestMapping(value="debt", method = RequestMethod.POST)
+    public List<Debt> getUserDebt() throws SQLException {
     	
-    	DebtEngine de = new DebtEngine();
     	return de.compute();
     }
-    
-    
-
-
 }
   

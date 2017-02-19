@@ -20,13 +20,13 @@ angular.module('coupleAccountsApp').factory('ExpenseService', [ '$route', '$root
 		},
 		
 		deleteExpenses : function(ids) {
-			return $http.post('/expense/delete', {ids:ids}).then(function(response) {
+			return $http.post('/expense/delete', ids).then(function(response) {
 				return response.data;
 			});
 		},
 		
 		archiveExpenses : function(ids) {
-			return $http.post('/expense/archive', {ids:ids}).then(function(response) {
+			return $http.post('/expense/archive', ids).then(function(response) {
 				return response.data;
 			});
 		},

@@ -1,4 +1,4 @@
-var coupleAccountsApp = angular.module('coupleAccountsApp', ['ngRoute', 'coupleAccountsControllers', 'chart.js', 'ngAnimate', 'ui.bootstrap']);
+var coupleAccountsApp = angular.module('coupleAccountsApp', ['ngRoute', 'coupleAccountsControllers', 'chart.js', 'ngAnimate', 'ui.bootstrap', 'ui-notification']);
 
 coupleAccountsApp.config(['$routeProvider',
                           function($routeProvider) {
@@ -14,10 +14,6 @@ coupleAccountsApp.config(['$routeProvider',
       	                        when('/users', {
       	                          templateUrl: 'partials/users.html',
       	                          controller: 'UsersCtrl'
-      	                        }).
-      	                        when('/database', {
-      	                          templateUrl: 'partials/database.html',
-      	                          controller: 'DatabaseCtrl'
       	                        }).
       	                        when('/statistics', {
       	                          templateUrl: 'partials/statistics.html',

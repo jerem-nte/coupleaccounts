@@ -1,50 +1,47 @@
 package services;
 
+import java.sql.SQLException;
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import core.User;
 import dao.UserDao;
 import dto.ResponseDto;
 import dto.UserHtmlSelectDto;
 
-@Path("/user")
+@RestController
+@RequestMapping("/user")
 public class UserService {
 
+	@Autowired
+	private UserDao userDao;
 	
-	@GET
-    @Path("list")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<User> list() {
+	@RequestMapping("/list")
+    public List<User> list() throws SQLException {
     	
-		List<User> users = UserDao.getUsers();
+		List<User> users = userDao.getUsers();
 		return users;
     	
     }
 	
-	@GET
-    @Path("listhtmlselect")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<UserHtmlSelectDto> listhtmlselect() {
+	@RequestMapping("/listhtmlselect")
+    public List<UserHtmlSelectDto> listhtmlselect() throws SQLException {
     	
-		List<User> users = UserDao.getUsers();
+		List<User> users = userDao.getUsers();
 		return UserHtmlSelectDto.convert(users);
     	
     }
 	
 	
-	@GET
-    @Path("edit")
-    @Produces(MediaType.APPLICATION_JSON)
-    public ResponseDto edit(@QueryParam("id") String userId, @QueryParam("name") String userName) {
+	@RequestMapping("edit")
+    public ResponseDto edit(@RequestParam("id") String userId, @RequestParam("name") String userName) {
     	
 		try {
-			UserDao.update(new User(userId, userName, null));
+			userDao.update(new User(userId, userName, null));
 		} catch (Exception e) {
 			return new ResponseDto(1, e.getMessage());
 		}

@@ -7,22 +7,29 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import core.User;
-import db.SQLConnectionManagerFactory;
 
+@Repository
 public class UserDao {
 	
 	private static Logger logger = Logger.getLogger(UserDao.class);
 	
-	public static List<User> getUsers() {
+	@Autowired
+	private DataSource dataSource;
+	
+	public List<User> getUsers() throws SQLException {
 		
 		List<User> userList = new ArrayList<User>();
 
 		String sql = "SELECT * FROM users";
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		ResultSet r;
 		
 		try {
@@ -47,13 +54,13 @@ public class UserDao {
 	}
 	
 	
-	public static User getUser(String userId) {
+	public User getUser(String userId) throws SQLException {
 		
 		User u = null;
 		
 		String sql = "SELECT * FROM users WHERE id=" + userId;
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		ResultSet r;
 		
 		try {
@@ -76,9 +83,9 @@ public class UserDao {
 		return u;
 	}
 	
-	public static void update(User user) throws Exception {
+	public void update(User user) throws Exception {
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		PreparedStatement prep;
 		
 		try {
@@ -107,12 +114,12 @@ public class UserDao {
 		
 	}
 	
-	public static User getFirstUser() {
+	public User getFirstUser() throws SQLException {
 		
 		return getUser("1");
 	}
 	
-	public static User getSecondUser() {
+	public User getSecondUser() throws SQLException {
 		
 		return getUser("2");
 	}

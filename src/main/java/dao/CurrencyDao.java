@@ -6,22 +6,29 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import core.Currency;
-import db.SQLConnectionManagerFactory;
 
+@Repository
 public class CurrencyDao {
 
 	private static Logger logger = Logger.getLogger(CurrencyDao.class);
 	
-	public static List<Currency> getCurrencies() {
+	@Autowired
+	private DataSource dataSource;
+	
+	public List<Currency> getCurrencies() throws SQLException {
 		
 		List<Currency> currencyList = new ArrayList<Currency>();
 
 		String sql = "SELECT * FROM currency";
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		ResultSet r;
 		
 		try {
@@ -45,11 +52,11 @@ public class CurrencyDao {
 		return currencyList;
 	}
 	
-	public static Currency getCurrency(String id) {
+	public Currency getCurrency(String id) throws SQLException {
 		
 		String sql = "SELECT * FROM currency WHERE id="+id;
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
+		Connection c = dataSource.getConnection();
 		ResultSet r;
 		
 		try {
