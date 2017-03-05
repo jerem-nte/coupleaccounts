@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Profile;
 public class DataSourceConfiguration {
 	
 	@Bean
+	@Profile("default")
 	@ConfigurationProperties(prefix = "spring.datasource")
 	public DataSource dataSource() {
 		return DataSourceBuilder.create().build();
