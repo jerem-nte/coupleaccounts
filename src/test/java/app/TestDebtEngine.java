@@ -40,8 +40,7 @@ public class TestDebtEngine {
 
 	
 	@Test
-	@Sql(scripts = "../config/coupleaccounts.sql")
-	@Sql(scripts = "../config/insert_users_currencies.sql")
+	@Sql(scripts = {"../config/coupleaccounts.sql", "../config/insert_users_currencies.sql"})
 	public void computeUser1() throws Exception {
 		
 		List<Debt> debts;
@@ -55,8 +54,7 @@ public class TestDebtEngine {
 	}
 	
 	@Test
-	@Sql(scripts = "../config/coupleaccounts.sql")
-	@Sql(scripts = "../config/insert_users_currencies.sql")
+	@Sql(scripts = {"../config/coupleaccounts.sql", "../config/insert_users_currencies.sql"})
 	public void computeUser2() throws Exception {
 		
 		List<Debt> debts;
@@ -71,8 +69,7 @@ public class TestDebtEngine {
 	}
 	
 	@Test
-	@Sql(scripts = "../config/coupleaccounts.sql")
-	@Sql(scripts = "../config/insert_users_currencies.sql")
+	@Sql(scripts = {"../config/coupleaccounts.sql", "../config/insert_users_currencies.sql"})
 	public void computeEmptyWithExpense() throws Exception {
 		
 		List<Debt> debts;
@@ -85,8 +82,7 @@ public class TestDebtEngine {
 	}
 	
 	@Test
-	@Sql(scripts = "../config/coupleaccounts.sql")
-	@Sql(scripts = "../config/insert_users_currencies.sql")
+	@Sql(scripts = {"../config/coupleaccounts.sql", "../config/insert_users_currencies.sql"})
 	public void computeEmptyWithoutExpense() throws Exception {
 		
 		List<Debt> debts;
@@ -97,8 +93,7 @@ public class TestDebtEngine {
 	}
 	
 	@Test
-	@Sql(scripts = "../config/coupleaccounts.sql")
-	@Sql(scripts = "../config/insert_users_currencies.sql")
+	@Sql(scripts = {"../config/coupleaccounts.sql", "../config/insert_users_currencies.sql"})
 	public void compute1ct() throws Exception {
 		
 		List<Debt> debts;
