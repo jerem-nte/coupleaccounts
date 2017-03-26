@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import dto.ResponseDto;
 @RequestMapping("/expense")
 public class ExpenseService {
 	
+	private static Logger logger = Logger.getLogger(ExpenseService.class);
 	@Autowired
 	private ExpenseDao expenseDao;
 	
@@ -92,18 +94,21 @@ public class ExpenseService {
     	Double amountDouble;
     	
     	try {
-    		amountDouble = Double.parseDouble((String) json.get("amount"));
+    		amountDouble = Double.parseDouble(String.valueOf(json.get("amount")));
     	} catch(Exception e) {
+    		logger.error("Please enter a valid amount");
     		return new ResponseDto(1, "Please enter a valid amount");
     	}
     	
     	if(amountDouble < 0) {
+    		logger.error("An expense cannot be negative");
     		return new ResponseDto(1, "An expense cannot be negative");
     	}
     	
     	try {
-    		expenseDao.addExpense((String)json.get("userId"), (String)json.get("label"), amountDouble, (String)json.get("scope"), (String)json.get("currencyId"));
+    		expenseDao.addExpense((String)json.get("userId"), (String)json.get("label"), amountDouble, (String) json.get("scope"), (String)json.get("currencyId"));
 		} catch (Exception e) {
+			logger.error("Cannot add expense", e);
 			return new ResponseDto(1, "Cannot add expense : " + e.getMessage());
 		}
     	

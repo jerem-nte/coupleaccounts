@@ -167,7 +167,6 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		});
 		
 		modalInstance.result.then(function (data) {
-			$scope.alerts.push(data);
 			$scope.getTransactions();
 			$scope.getUserDebt();
 		    }, function () {}
@@ -187,7 +186,7 @@ coupleAccountsControllers.controller('PayTheBillCtrl', function ($scope, $http, 
 	
 	$scope.ok = function () {
 		if(debt.debt!=0) {
-			ExpenseService.addExpense(debt.debit.id, 'Remboursement des dettes', debt.debt, 1, debt.currency.id).then(function(data) {
+			ExpenseService.addExpense(debt.debit.id, 'Remboursement des dettes', debt.debt, '1', debt.currency.id).then(function(data) {
 				$uibModalInstance.close(data);
 	    	}).catch(function(data) {
 	    		$uibModalInstance.close(data);
