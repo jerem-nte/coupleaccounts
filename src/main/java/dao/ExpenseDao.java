@@ -205,5 +205,31 @@ public class ExpenseDao {
 		
 		return expenses;
 	}
+
+
+	public boolean isSimilarExpenseExist(String userId, Double amount, String scope, String currencyId) throws SQLException {
+		String sql = "SELECT count(*) as nb_transactions FROM transactions WHERE archived=0 AND user_id=" + userId + " AND amount=" + amount + " AND scope=" + scope + " AND currency_id=" + currencyId;
+		logger.info("SQL exist = " + sql);
+		
+		Connection c = dataSource.getConnection();
+		ResultSet r;
+		
+		try {
+			r = c.createStatement().executeQuery(sql);
+			if(r.next() && r.getInt("nb_transactions") > 0) {
+				return true;
+			}
+		} catch (SQLException e) {
+			logger.error("Cannot retreive users from database", e);
+			return false;
+		} finally {
+			try {
+				c.close();
+			} catch (SQLException e) {
+				logger.error("Cannot close connection", e);
+			}
+		}
+		return false;
+	}
 	
 }

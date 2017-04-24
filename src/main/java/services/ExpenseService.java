@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -120,6 +122,20 @@ public class ExpenseService {
     public List<Debt> getUserDebt() throws SQLException {
     	
     	return de.compute();
+    }
+    
+    @RequestMapping(value="exist", method = RequestMethod.POST)
+    public Boolean isSimilarExpenseExist(@RequestBody Map<String, Object> json, HttpServletResponse response) throws SQLException {
+    	
+    	Double amountDouble;
+    	try {
+    		amountDouble = Double.parseDouble(String.valueOf(json.get("amount")));
+    	} catch(Exception e) {
+    		logger.warn("Cannot check if similar transaction exist : Please enter a valid amount");
+    		return false;
+    	}
+    	
+    	return expenseDao.isSimilarExpenseExist((String)json.get("userId"), amountDouble, (String) json.get("scope"), (String)json.get("currencyId"));
     }
 }
   

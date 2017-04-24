@@ -57,6 +57,12 @@ coupleAccountsControllers.controller('TransactionsCtrl', ['$scope', '$http', '$q
 		
 		if(isValid) {
 			
+			ExpenseService.isExpenseExist($scope.user, $scope.amount, $scope.scope, $scope.currency).then(function(exist) {
+    			if(exist) {
+    				Notification({message: 'A similar expense already exist', positionY: 'bottom', positionX: 'center'}, 'warning');
+    			}
+	    	});
+	    	
 			ExpenseService.addExpense($scope.user, $scope.label, $scope.amount, $scope.scope, $scope.currency).then(function(data) {
 					Notification({message: data.content, positionY: 'bottom', positionX: 'center'}, data.status == 0 ? 'success' : 'warning');
 					$scope.getTransactions();
