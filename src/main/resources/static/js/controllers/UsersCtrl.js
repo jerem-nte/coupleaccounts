@@ -18,16 +18,15 @@ coupleAccountsControllers.controller('EditUserCtrl', function ($scope, $http, $u
 
 
 
-coupleAccountsControllers.controller('UsersCtrl', ['$scope', '$http', '$uibModal', 'UserService', function ($scope, $http, $uibModal, UserService) {
+coupleAccountsControllers.controller('UsersCtrl', ['$scope', '$http', '$uibModal', 'UserService', 'Notification', function ($scope, $http, $uibModal, UserService, Notification) {
 	
-	$scope.message = {};
 	$scope.users = [];
 	 
 	$scope.loadUsers = function() {
 		UserService.getUsers().then(function(data) {
 			$scope.users = data;
 		}).catch(function(data) {
-			$scope.message = 'Error getting users';
+			Notification.error({message: 'Error getting users', positionY: 'bottom', positionX: 'center'});
 		});
 	}
 	
@@ -46,7 +45,7 @@ coupleAccountsControllers.controller('UsersCtrl', ['$scope', '$http', '$uibModal
 		});
 		
 		modalInstance.result.then(function (data) {
-			$scope.message = data;
+			Notification({message: 'User updated', positionY: 'bottom', positionX: 'center'}, 'success');
 			$scope.loadUsers();
 		    }, function () {
 		      console.log("Closed edit user modal");

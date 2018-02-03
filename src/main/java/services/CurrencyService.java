@@ -1,26 +1,27 @@
 package services;
 
+import java.sql.SQLException;
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import core.Currency;
 import dao.CurrencyDao;
 import dto.CurrencyHtmlSelectDto;
 
-@Path("/currency")
+@RestController
+@RequestMapping("/currency")
 public class CurrencyService {
 
+	@Autowired
+	CurrencyDao dao;
 	
-	@GET
-    @Path("listhtmlselect")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<CurrencyHtmlSelectDto> listhtmlselect() {
+	@RequestMapping("listhtmlselect")
+    public List<CurrencyHtmlSelectDto> listhtmlselect() throws SQLException {
     	
-		List<Currency> currencies = CurrencyDao.getCurrencies();
+		List<Currency> currencies = dao.getCurrencies();
 		return CurrencyHtmlSelectDto.convert(currencies);
     	
     }

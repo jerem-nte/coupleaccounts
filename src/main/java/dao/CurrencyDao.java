@@ -1,73 +1,41 @@
 package dao;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import core.Currency;
-import db.SQLConnectionManagerFactory;
 
+@Repository
 public class CurrencyDao {
 
-	private static Logger logger = Logger.getLogger(CurrencyDao.class);
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 	
-	public static List<Currency> getCurrencies() {
+	public List<Currency> getCurrencies() {
 		
-		List<Currency> currencyList = new ArrayList<Currency>();
-
-		String sql = "SELECT * FROM currency";
-		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
-		ResultSet r;
-		
-		try {
-			r = c.createStatement().executeQuery(sql);
-
-			while (r.next()) {
-			   Currency curr = new Currency(r.getString("id"), r.getString("name"), r.getString("shortname"), r.getString("icon"));
-			   currencyList.add(curr);
+		return jdbcTemplate.query("SELECT * FROM currency", new RowMapper<Currency>() {
+			@Override
+			public Currency mapRow(ResultSet r, int rowNum) throws SQLException {
+				return new Currency(r.getString("id"), r.getString("name"), r.getString("shortname"), r.getString("icon"));
 			}
-		} catch (SQLException e) {
-			logger.error("Cannot retreive users from database", e);
-			return null;
-		} finally {
-			try {
-				c.close();
-			} catch (SQLException e) {
-				logger.error("Cannot close connection", e);
-			}
-		}
-		
-		return currencyList;
+		});
 	}
 	
-	public static Currency getCurrency(String id) {
+	public Currency getCurrency(String id) throws SQLException {
 		
-		String sql = "SELECT * FROM currency WHERE id="+id;
+		String sql = "SELECT * FROM currency WHERE id=?";
 		
-		Connection c = SQLConnectionManagerFactory.getInstance().create().getConnection();
-		ResultSet r;
-		
-		try {
-			r = c.createStatement().executeQuery(sql);
-
-			if(r.next()) {
-			   return new Currency(r.getString("id"), r.getString("name"), r.getString("shortname"), r.getString("icon"));
+		return jdbcTemplate.queryForObject(sql, new RowMapper<Currency>() {
+			@Override
+			public Currency mapRow(ResultSet r, int rowNum) throws SQLException {
+				return new Currency(r.getString("id"), r.getString("name"), r.getString("shortname"), r.getString("icon"));
 			}
-		} catch (SQLException e) {
-			logger.error("Cannot retreive users from database", e);
-			return null;
-		} finally {
-			try {
-				c.close();
-			} catch (SQLException e) {
-				logger.error("Cannot close connection", e);
-			}
-		}
-		return null;
+		}, id);
 	}
 }

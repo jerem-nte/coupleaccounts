@@ -19,14 +19,20 @@ angular.module('coupleAccountsApp').factory('ExpenseService', [ '$route', '$root
 			});
 		},
 		
+		isExpenseExist : function(userId, amount, scope, currencyId) {
+			return $http.post('/expense/exist', {userId:userId, amount:amount, scope:scope, currencyId:currencyId}).then(function(response) {
+				return response.data;
+			});
+		},
+		
 		deleteExpenses : function(ids) {
-			return $http.post('/expense/delete', {ids:ids}).then(function(response) {
+			return $http.post('/expense/delete', ids).then(function(response) {
 				return response.data;
 			});
 		},
 		
 		archiveExpenses : function(ids) {
-			return $http.post('/expense/archive', {ids:ids}).then(function(response) {
+			return $http.post('/expense/archive', ids).then(function(response) {
 				return response.data;
 			});
 		},
